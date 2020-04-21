@@ -26,6 +26,7 @@ class EnquiryForm extends React.Component {
         })
     }
 
+    genderList = ["Male", "Female", "Rather Not Say", "Others"];
 
     render() {
         return (
@@ -39,10 +40,11 @@ class EnquiryForm extends React.Component {
                     <div>
                         <label>
                             Your Gender:
-                            <select value={this.state.gender} onChange={this.handleInputChange}>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Rather Not Say">Rather Not Say</option>
+                            <select value={this.state.gender} name={"gender"} onChange={this.handleInputChange}>
+                                {this.genderList.map((el) =>
+                                    (<option value={el}>{el}</option>)
+                                )}
+
                             </select>
                         </label>
                     </div>
