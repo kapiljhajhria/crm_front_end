@@ -5,7 +5,8 @@ class EnquiryForm extends React.Component {
     state = {
         customerName: '',
         gender: "Male",
-        mobNo: ""
+        mobNo: "",
+        fetchedData: ""
     };
 
     constructor(props) {
@@ -27,6 +28,22 @@ class EnquiryForm extends React.Component {
     }
 
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
+
+    getCustomerId = async () => {
+        this.setState({fetchedData: null});
+        let postData = new FormData();
+        const payload = this.state;
+        postData.append("myjsonkey", JSON.stringify(payload));
+
+        let response = await fetch('https://cors-anywhere.herokuapp.com/https://us-central1-form-manager-7234f.cloudfunctions.net/saveCustomer', {
+            method: 'POST',
+            headers: postData
+        })
+        let jsonMap = await response.json();
+        this.setState({fetchedData: jsonMap['customerID']});
+        console.log("fetched CustomerID is: " + jsonMap['customerID']);
+    }
+
 
     render() {
         return (
@@ -55,10 +72,9 @@ class EnquiryForm extends React.Component {
                     </div>
 
                 </form>
-                <button onClick={() => {
-                    console.log(this.state);
-                }}>Save info
-                </button>
+                {this.state.fetchedData === null ? <div>Loading.....</div> :
+                    <button onClick={() => this.getCustomerId()}>Save info
+                    </button>}
             </div>
         );
     }
