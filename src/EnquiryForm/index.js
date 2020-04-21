@@ -10,29 +10,22 @@ class EnquiryForm extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handelNameChange = this.handelNameChange.bind(this);
-        this.handelGenderChange = this.handelGenderChange.bind(this);
-        this.handelMobNoChange= this.handelMobNoChange.bind(this);
     }
 
-
-    handelNameChange(event) {
+    // // method 1
+    // handleInputChange = (event) => {
+    //     let updateObject = {};
+    //     let key = event.target.name;
+    //     updateObject[key] = event.target.value;
+    //     this.setState(updateObject);
+    // }
+    // method 2
+    handleInputChange = (event) => {
         this.setState({
-            customerName: event.target.value
-        });
+            [event.target.name]: event.target.value
+        })
     }
 
-    handelGenderChange(event) {
-        this.setState({
-            gender: event.target.value
-        });
-    }
-
-    handelMobNoChange(event) {
-        this.setState({
-            mobNo: event.target.value
-        });
-    }
 
     render() {
         return (
@@ -41,12 +34,12 @@ class EnquiryForm extends React.Component {
                     <div>
                         <label htmlFor="customerName">Your Name:</label>
                         <input type="text" name="customerName" value={this.state.customerName}
-                               onChange={this.handelNameChange}/>
+                               onChange={this.handleInputChange}/>
                     </div>
                     <div>
                         <label>
                             Your Gender:
-                            <select value={this.state.gender} onChange={this.handelGenderChange}>
+                            <select value={this.state.gender} onChange={this.handleInputChange}>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Rather Not Say">Rather Not Say</option>
@@ -56,7 +49,7 @@ class EnquiryForm extends React.Component {
                     <div>
                         <label htmlFor="mobNo">Contact Number:</label>
                         <input type="text" name="mobNo" value={this.state.mobNo}
-                               onChange={this.handelMobNoChange}/>
+                               onChange={this.handleInputChange}/>
                     </div>
 
                 </form>
