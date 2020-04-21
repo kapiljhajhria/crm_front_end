@@ -72,7 +72,7 @@ class EnquiryForm extends React.Component {
                     </div>
 
                 </form>
-                {this.state.fetchedData === null ? <div>Loading.....</div> :
+                {this.state.fetchedData === null ? <div>Fetching Customer ID......</div> :
                     <button onClick={() => this.getCustomerId()}>Save info
                     </button>}
             </div>
