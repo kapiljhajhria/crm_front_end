@@ -1,5 +1,6 @@
 import React from "react";
 import './styles.css'
+import {Button} from '@material-ui/core';
 
 class EnquiryForm extends React.Component {
     state = {
@@ -73,8 +74,8 @@ class EnquiryForm extends React.Component {
 
                 </form>
                 {this.state.fetchedData === null ? <div>Fetching Customer ID......</div> :
-                    <button onClick={() => this.getCustomerId()}>Save info
-                    </button>}
+                    <Button onClick={() => this.getCustomerId()}>Save info
+                    </Button>}
             </div>
         );
     }
