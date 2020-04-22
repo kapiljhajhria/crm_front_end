@@ -1,11 +1,23 @@
 form > div {
+    padding-top: 15px;
     margin-bottom: 15px;
-    width: 10em;
-    height: 3em;
+    /*width: 10em;*/
+    /*height: 3em;*/
 }
 
 form + Button {
     width: 8em;
     height: 3em;
     font-size: 10px;
+}
+
+form {
+    background-color: #ffffff;
+}
+
+.paper {
+    padding: 10px;
+    margin: 0 25px 10px 25px;
+    background-color: green;
+    color: green;
 }

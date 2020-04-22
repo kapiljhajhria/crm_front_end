@@ -34,11 +34,11 @@ export default function SimpleTable(props) {
                     {props.tableData.map((row) => (
                         <TableRow key={row.name}>
                             <TableCell component="th" scope="row">
-                                {row.name}
+                                {row.custId}
                             </TableCell>
-                            <TableCell align="right">{row.calories}</TableCell>
-                            <TableCell align="right">{row.fat}</TableCell>
-                            <TableCell align="right">{row.carbs}</TableCell>
+                            <TableCell align="right">{row.name}</TableCell>
+                            <TableCell align="right">{row.gender}</TableCell>
+                            <TableCell align="right">{row.contact}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
