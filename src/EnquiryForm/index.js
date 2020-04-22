@@ -52,6 +52,12 @@ class EnquiryForm extends React.Component {
         tableDataCopy.push(this.createData(jsonMap['customerID'], this.state.customerName, this.state.gender, this.state.mobNo))
         this.setState({tableData: tableDataCopy});
         localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+        this.setState({
+            customerName: '',
+            gender: "Male",
+            mobNo: "",
+            fetchedData: "",
+        })
     }
 
     componentDidMount() {
@@ -72,14 +78,14 @@ class EnquiryForm extends React.Component {
                     <form>
                         <div>
                             <TextField name="customerName" id="customerName" label="Customer Name" variant="outlined"
-                                       onChange={this.handleInputChange}/>
+                                       onChange={this.handleInputChange} value={this.state.customerName}/>
                             {/*<label htmlFor="customerName">Your Name:</label>*/}
                             {/*<input type="text" name="customerName" value={this.state.customerName}*/}
                             {/*       onChange={this.handleInputChange}/>*/}
                         </div>
                         <div>
                             <TextField name="mobNo" id="mobNo" label="Contact No." variant="outlined"
-                                       onChange={this.handleInputChange}/>
+                                       onChange={this.handleInputChange} value={this.state.mobNo}/>
 
                         </div>
                         <div>
