@@ -50,8 +50,17 @@ class EnquiryForm extends React.Component {
         let tableDataCopy = [].concat(this.state.tableData);
         tableDataCopy.push(this.createData(jsonMap['customerID'], this.state.customerName, this.state.gender, this.state.mobNo))
         this.setState({tableData: tableDataCopy});
+        localStorage.setItem('myData', JSON.stringify(this.state));
     }
 
+    componentDidMount() {
+        console.log(localStorage.getItem('myData'))
+        // localStorage.getItem('myData').then((data)=>{
+        //     console.log(data);
+        //     console.log(" 2data from local storage");
+        // })
+        console.log("data from local storage");
+    }
 
     render() {
         return (

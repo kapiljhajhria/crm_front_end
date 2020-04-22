@@ -20,7 +20,7 @@ export default function SimpleTable(props) {
 
     return (
         <TableContainer component={Paper}>
-            {console.log(props)}
+            {/*{console.log(props)}*/}
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                     <TableRow>
