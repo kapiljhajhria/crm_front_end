@@ -5,27 +5,26 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
+import SimpleTable from "../Table";
 
 class EnquiryForm extends React.Component {
     state = {
         customerName: '',
         gender: "Male",
         mobNo: "",
-        fetchedData: ""
+        fetchedData: "",
+        tableData: [],
     };
 
     constructor(props) {
         super(props);
     }
 
-    // // method 1
-    // handleInputChange = (event) => {
-    //     let updateObject = {};
-    //     let key = event.target.name;
-    //     updateObject[key] = event.target.value;
-    //     this.setState(updateObject);
-    // }
-    // method 2
+    createData = (name, calories, fat, carbs,) => {
+        return {name, calories, fat, carbs,}
+    }
+
+
     handleInputChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
@@ -48,6 +47,9 @@ class EnquiryForm extends React.Component {
         this.setState({fetchedData: jsonMap['customerID']});
         console.log(this.state);
         console.log("fetched CustomerID is: " + jsonMap['customerID']);
+        let tableDataCopy = [].concat(this.state.tableData);
+        tableDataCopy.push(this.createData(jsonMap['customerID'], this.state.customerName, this.state.gender, this.state.mobNo))
+        this.setState({tableData: tableDataCopy});
     }
 
 
@@ -90,9 +92,11 @@ class EnquiryForm extends React.Component {
                         <CircularProgress color="secondary"/></div> :
                     <Button color="primary" variant="contained" onClick={() => this.getCustomerId()}>Save info
                     </Button>}
+                <SimpleTable className="simpleTable" tableData={this.state.tableData}/>
             </div>
         );
     }
 }
+
 
 export default EnquiryForm;
