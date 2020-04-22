@@ -62,7 +62,7 @@ class EnquiryForm extends React.Component {
 
     componentDidMount() {
         let dataList = JSON.parse(localStorage.getItem('myData'));
-        this.setState({tableData: dataList})
+        this.setState({tableData: dataList ?? []})
         console.log(localStorage.getItem('myData'))
         // localStorage.getItem('myData').then((data)=>{
         //     console.log(data);
