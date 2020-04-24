@@ -15,6 +15,7 @@ class EnquiryForm extends React.Component {
         mobNo: "",
         fetchedData: "",
         tableData: [],
+        custIdBeingDeleted: [],
     };
 
     constructor(props) {
@@ -25,8 +26,13 @@ class EnquiryForm extends React.Component {
         return {custId, name, gender, contact,}
     }
 
-    deleteCustomerId = (custId) => {
+    deleteCustomerId = async (custId) => {
+        let custIdBeingDeletedCopy = JSON.parse(JSON.stringify(this.state.custIdBeingDeleted));
+        custIdBeingDeletedCopy.push(custId);
+        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
+        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/5000/url/http://www.google.co.uk ");
+
         let tableDataCopy = [].concat(this.state.tableData)
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
         console.log("found index:" + indexOfCust)
@@ -41,7 +47,6 @@ class EnquiryForm extends React.Component {
             [event.target.name]: event.target.value
         })
     }
-
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
 
     getCustomerId = async () => {
@@ -123,6 +128,7 @@ class EnquiryForm extends React.Component {
                         </Button>}
                 </Paper>
                 <SimpleTable className="simpleTable" tableData={this.state.tableData}
+                             custIdBeingDeleted={this.state.custIdBeingDeleted}
                              deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/>
             </div>
         );

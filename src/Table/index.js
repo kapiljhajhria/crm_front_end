@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 
 const useStyles = makeStyles({
@@ -51,7 +52,8 @@ export default function SimpleTable(props) {
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{row.gender}</TableCell>
                             <TableCell align="right">{row.contact}</TableCell>
-                            <TableCell align="right">{<Button
+                            <TableCell align="right">{props.custIdBeingDeleted.includes(row.custId) ? <div>
+                                <CircularProgress color="secondary"/></div> : <Button
                                 variant="contained"
                                 color="secondary"
                                 className={"deleteBtn"}
