@@ -25,7 +25,17 @@ class EnquiryForm extends React.Component {
         return {custId, name, gender, contact,}
     }
 
+    deleteCustomerId = (custId) => {
+        console.log("deleting stuff id:" + custId);
+        let tableDataCopy = [].concat(this.state.tableData)
+        let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
+        console.log("found index:" + indexOfCust)
+        tableDataCopy.splice(indexOfCust, 1);
+        localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+        let dataList = JSON.parse(localStorage.getItem('myData'));
+        this.setState({tableData: dataList ?? []})
 
+    }
     handleInputChange = (event) => {
         this.setState({
             [event.target.name]: event.target.value
@@ -112,7 +122,8 @@ class EnquiryForm extends React.Component {
                         <Button color="primary" variant="contained" onClick={() => this.getCustomerId()}>Save info
                         </Button>}
                 </Paper>
-                <SimpleTable className="simpleTable" tableData={this.state.tableData}/>
+                <SimpleTable className="simpleTable" tableData={this.state.tableData}
+                             deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/>
             </div>
         );
     }

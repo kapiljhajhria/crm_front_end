@@ -20,7 +20,15 @@ const useStyles = makeStyles({
 
 export default function SimpleTable(props) {
     const classes = useStyles();
-
+    // function deleteCustomerId(custId){
+    //     console.log("deleting stuff id:"+custId);
+    //     let tableDataCopy = [].concat(props.tableData)
+    //     let indexOfCust=tableDataCopy.findIndex((cust)=>cust.custId===custId);
+    //     console.log("found index:"+indexOfCust)
+    //     tableDataCopy.splice(indexOfCust,1);
+    //     localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+    //
+    // }
     return (
         <TableContainer component={Paper}>
             {/*{console.log(props)}*/}
@@ -48,6 +56,9 @@ export default function SimpleTable(props) {
                                 color="secondary"
                                 className={"deleteBtn"}
                                 startIcon={<DeleteIcon/>}
+                                onClick={() => {
+                                    props.deleteCustomerId(row.custId)
+                                }}
                             />}</TableCell>
                         </TableRow>
                     ))}
