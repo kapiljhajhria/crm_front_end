@@ -7,6 +7,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import SimpleTable from "../Table";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from '@material-ui/lab';
 
 class EnquiryForm extends React.Component {
     state = {
@@ -16,12 +18,26 @@ class EnquiryForm extends React.Component {
         fetchedData: "",
         tableData: [],
         custIdBeingDeleted: [],
+        openSnackBar: false,
+        lastDeletedCustomer: {}
     };
 
     constructor(props) {
         super(props);
     }
 
+
+    showSnackBar = () => {
+        this.setState({openSnackBar: true});
+    };
+
+    closeSnackBar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        this.setState({openSnackBar: false});
+    };
     createData = (custId, name, gender, contact,) => {
         return {custId, name, gender, contact,}
     }
@@ -31,15 +47,18 @@ class EnquiryForm extends React.Component {
         custIdBeingDeletedCopy.push(custId);
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
-        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/5000/url/http://www.google.co.uk ");
+        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/1000/url/http://www.google.co.uk ");
 
         let tableDataCopy = [].concat(this.state.tableData)
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
         console.log("found index:" + indexOfCust)
-        tableDataCopy.splice(indexOfCust, 1);
+        let lastDeletedCustomerCopy = tableDataCopy.splice(indexOfCust, 1);
+        lastDeletedCustomerCopy = lastDeletedCustomerCopy[0]
+        this.setState({lastDeletedCustomer: lastDeletedCustomerCopy})
         localStorage.setItem('myData', JSON.stringify(tableDataCopy));
         let dataList = JSON.parse(localStorage.getItem('myData'));
         this.setState({tableData: dataList ?? []})
+        this.showSnackBar();
 
     }
     handleInputChange = (event) => {
@@ -48,7 +67,13 @@ class EnquiryForm extends React.Component {
         })
     }
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
-
+    undoDelete = () => {
+        let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
+        let tableDataCopy = [].concat(this.state.tableData);
+        tableDataCopy.push(lastDeletedCustomerCopy)
+        this.setState({tableData: tableDataCopy, lastDeletedCustomer: {}});
+        localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+    }
     getCustomerId = async () => {
         this.setState({fetchedData: null});
         let postData = new FormData();
@@ -130,6 +155,31 @@ class EnquiryForm extends React.Component {
                 <SimpleTable className="simpleTable" tableData={this.state.tableData}
                              custIdBeingDeleted={this.state.custIdBeingDeleted}
                              deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/>
+                <Snackbar open={this.state.openSnackBar} autoHideDuration={6000} onClose={this.showSnackBar}>
+                    <Alert onClose={this.closeSnackBar} severity="success" action={
+                        <Button color="inherit" size="small" onClick={this.undoDelete}>
+                            Undo
+                        </Button>
+                    }>
+                        Customer Deleted!
+                    </Alert>
+                </Snackbar>
+                {/*<Alert onClose={this.closeSnackBar} severity="success" action={*/}
+                {/*    <Button color="inherit" size="small" onClick={this.undoDelete}>*/}
+                {/*        Undo*/}
+                {/*    </Button>*/}
+                {/*}>*/}
+                {/*    Customer Deleted!*/}
+                {/*</Alert>*/}
+                {/*<Alert severity="error">This is an error message!</Alert>*/}
+                {/*<Alert severity="warning">This is a warning message!</Alert>*/}
+                {/*<Alert severity="info">This is an information message!</Alert>*/}
+                {/*<Alert severity="success" action={*/}
+                {/*    <Button color="inherit" size="small">*/}
+                {/*        Undo*/}
+                {/*    </Button>*/}
+                {/*}>This is a success message!</Alert>*/}
+
             </div>
         );
     }
