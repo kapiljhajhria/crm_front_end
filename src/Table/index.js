@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,6 +8,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 
 const useStyles = makeStyles({
     table: {
@@ -28,6 +31,7 @@ export default function SimpleTable(props) {
                         <TableCell align="right">Name</TableCell>
                         <TableCell align="right">Gender</TableCell>
                         <TableCell align="right">Contact No</TableCell>
+                        <TableCell align="right">Remove?</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -39,6 +43,12 @@ export default function SimpleTable(props) {
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{row.gender}</TableCell>
                             <TableCell align="right">{row.contact}</TableCell>
+                            <TableCell align="right">{<Button
+                                variant="contained"
+                                color="secondary"
+                                className={"deleteBtn"}
+                                startIcon={<DeleteIcon/>}
+                            />}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
