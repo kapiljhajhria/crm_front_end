@@ -47,7 +47,7 @@ class EnquiryForm extends React.Component {
         custIdBeingDeletedCopy.push(custId);
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
-        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/1000/url/http://www.google.co.uk ");
+        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/3000/url/http://www.google.co.uk ");
 
         let tableDataCopy = [].concat(this.state.tableData)
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
@@ -68,6 +68,7 @@ class EnquiryForm extends React.Component {
     }
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
     undoDelete = async () => {
+        this.closeSnackBar();
         let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
         let tableDataCopy = [].concat(this.state.tableData);
         let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
@@ -165,7 +166,7 @@ class EnquiryForm extends React.Component {
                 <SimpleTable className="simpleTable" tableData={this.state.tableData}
                              custIdBeingDeleted={this.state.custIdBeingDeleted}
                              deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/>
-                <Snackbar open={this.state.openSnackBar} autoHideDuration={6000} onClose={this.showSnackBar}>
+                <Snackbar open={this.state.openSnackBar} autoHideDuration={3000} onClose={this.closeSnackBar}>
                     <Alert onClose={this.closeSnackBar} severity="success" action={
                         <Button color="inherit" size="small" onClick={this.undoDelete}>
                             Undo
