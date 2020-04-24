@@ -19,7 +19,7 @@ class EnquiryForm extends React.Component {
         tableData: [],
         custIdBeingDeleted: [],
         openSnackBar: false,
-        lastDeletedCustomer: {}
+        lastDeletedCustomer: []
     };
 
     constructor(props) {
@@ -53,7 +53,7 @@ class EnquiryForm extends React.Component {
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
         console.log("found index:" + indexOfCust)
         let lastDeletedCustomerCopy = tableDataCopy.splice(indexOfCust, 1);
-        lastDeletedCustomerCopy = lastDeletedCustomerCopy[0]
+        lastDeletedCustomerCopy = [lastDeletedCustomerCopy[0], indexOfCust]
         this.setState({lastDeletedCustomer: lastDeletedCustomerCopy})
         localStorage.setItem('myData', JSON.stringify(tableDataCopy));
         let dataList = JSON.parse(localStorage.getItem('myData'));
@@ -67,12 +67,23 @@ class EnquiryForm extends React.Component {
         })
     }
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
-    undoDelete = () => {
+    undoDelete = async () => {
         let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
         let tableDataCopy = [].concat(this.state.tableData);
-        tableDataCopy.push(lastDeletedCustomerCopy)
-        this.setState({tableData: tableDataCopy, lastDeletedCustomer: {}});
-        localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+        let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
+        custIdBeingDeletedCopy = custIdBeingDeletedCopy.filter((custId) => lastDeletedCustomerCopy[0].custId !== custId)
+        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy});
+        await this.updateTableData(tableDataCopy, lastDeletedCustomerCopy[0], lastDeletedCustomerCopy[1])
+    }
+
+    updateTableData = async (tableArray, elementoBeAdded, position) => {
+        console.log("position in new function is:" + position)
+        if (position === undefined)
+            tableArray.push(elementoBeAdded)
+        else
+            tableArray.splice(position, 0, elementoBeAdded);
+        this.setState({tableData: tableArray, lastDeletedCustomer: []});
+        localStorage.setItem('myData', JSON.stringify(tableArray));
     }
     getCustomerId = async () => {
         this.setState({fetchedData: null});
@@ -88,10 +99,9 @@ class EnquiryForm extends React.Component {
         this.setState({fetchedData: jsonMap['customerID']});
         console.log(this.state);
         console.log("fetched CustomerID is: " + jsonMap['customerID']);
+
         let tableDataCopy = [].concat(this.state.tableData);
-        tableDataCopy.push(this.createData(jsonMap['customerID'], this.state.customerName, this.state.gender, this.state.mobNo))
-        this.setState({tableData: tableDataCopy});
-        localStorage.setItem('myData', JSON.stringify(tableDataCopy));
+        await this.updateTableData(tableDataCopy, this.createData(jsonMap['customerID'], this.state.customerName, this.state.gender, this.state.mobNo))
         this.setState({
             customerName: '',
             gender: "Male",
