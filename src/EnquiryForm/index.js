@@ -92,15 +92,11 @@ class EnquiryForm extends React.Component {
     }
     getCustomerId = async () => {
         this.setState({fetchedData: null});
-        let postData = new FormData();
-        const payload = this.state;
-        postData.append("myjsonkey", JSON.stringify(payload));
-
-        let response = await fetch('https://cors-anywhere.herokuapp.com/https://us-central1-form-manager-7234f.cloudfunctions.net/saveCustomer', {
-            method: 'POST',
-            headers: postData
-        })
-        let jsonMap = await response.json();
+        let custDataMap = new Map();
+        custDataMap["name"] = this.state.customerName;
+        custDataMap["gender"] = this.state.gender;
+        custDataMap["contact"] = this.state.mobNo;
+        let jsonMap = await this.makePostRequest('https://us-central1-form-manager-7234f.cloudfunctions.net/saveCustomer', custDataMap);
         this.setState({fetchedData: jsonMap['customerID']});
         console.log(this.state);
         console.log("fetched CustomerID is: " + jsonMap['customerID']);
@@ -113,6 +109,16 @@ class EnquiryForm extends React.Component {
             mobNo: "",
             fetchedData: "",
         })
+    }
+
+    makePostRequest = async (url, dataAsMap) => {
+        let response = await fetch("https://cors-anywhere.herokuapp.com/" + url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dataAsMap)
+        })
+        let jsonMap = await response.json();
+        return jsonMap;
     }
 
     componentDidMount() {
