@@ -44,7 +44,7 @@ class EnquiryForm extends React.Component {
     }
 
     deleteCustomerId = async (custId) => {
-        let custIdBeingDeletedCopy = JSON.parse(JSON.stringify(this.state.custIdBeingDeleted));
+        let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
         custIdBeingDeletedCopy.push(custId);
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
@@ -60,7 +60,25 @@ class EnquiryForm extends React.Component {
         let dataList = JSON.parse(localStorage.getItem('myData'));
         this.setState({tableData: dataList ?? []})
         this.showSnackBar();
+        // let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
+        custIdBeingDeletedCopy = custIdBeingDeletedCopy.filter((custId) => lastDeletedCustomerCopy[0].custId !== custId)
+        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy});
 
+    }
+    validateData = () => {
+        let alertWarning = [];
+        if (this.state.customerName.length === 0)
+            alertWarning.push("Customer Name can't be empty");
+        if (this.state.mobNo.length === 0)
+            alertWarning.push("Contact number can't be empty");
+        if (isNaN(this.state.mobNo))
+            alertWarning.push("Please enter valid mob number");
+        if (`${parseInt(this.state.mobNo)}`.length !== 10)
+            alertWarning.push("Contact Number needs to be of 10 digit");
+
+        if (alertWarning.length > 0)
+            alert(alertWarning.join("\n"));
+        return alertWarning.length === 0
     }
     handleInputChange = (event) => {
         this.setState({
@@ -94,6 +112,8 @@ class EnquiryForm extends React.Component {
         localStorage.setItem('myData', JSON.stringify(tableArray));
     }
     getCustomerId = async () => {
+        if (!this.validateData())
+            return 0;
         this.setState({fetchedData: null});
         let custDataMap = new Map();
         custDataMap["name"] = this.state.customerName;
