@@ -48,8 +48,8 @@ class EnquiryForm extends React.Component {
         custIdBeingDeletedCopy.push(custId);
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
-        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/3000/url/http://www.google.co.uk ");
-
+        let res = await this.makePostRequest("https://us-central1-form-manager-7234f.cloudfunctions.net/deleteCustomer", {customerID: custId})
+        console.log("res from delete" + JSON.stringify(res))
         let tableDataCopy = [].concat(this.state.tableData)
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
         console.log("found index:" + indexOfCust)
@@ -71,7 +71,10 @@ class EnquiryForm extends React.Component {
     undoDelete = async () => {
         this.closeSnackBar();
         this.setState({showUndoIndicator: true})
-        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/3000/url/http://www.google.co.uk ");
+        let deleteMap = new Map();
+        deleteMap["customerID"] = this.state.lastDeletedCustomer[0]["custId"];
+        let res = await this.makePostRequest("https://us-central1-form-manager-7234f.cloudfunctions.net/undoDeleteCustomer", deleteMap)
+        console.log("res from undo" + JSON.stringify(res))
         let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
         let tableDataCopy = [].concat(this.state.tableData);
         let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
