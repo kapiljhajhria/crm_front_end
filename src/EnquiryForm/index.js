@@ -19,7 +19,8 @@ class EnquiryForm extends React.Component {
         tableData: [],
         custIdBeingDeleted: [],
         openSnackBar: false,
-        lastDeletedCustomer: []
+        lastDeletedCustomer: [],
+        showUndoIndicator: false
     };
 
     constructor(props) {
@@ -69,12 +70,15 @@ class EnquiryForm extends React.Component {
     genderList = ["Male", "Female", "Rather Not Say", "Others"];
     undoDelete = async () => {
         this.closeSnackBar();
+        this.setState({showUndoIndicator: true})
+        await fetch("https://cors-anywhere.herokuapp.com/http://slowwly.robertomurray.co.uk/delay/3000/url/http://www.google.co.uk ");
         let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
         let tableDataCopy = [].concat(this.state.tableData);
         let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
         custIdBeingDeletedCopy = custIdBeingDeletedCopy.filter((custId) => lastDeletedCustomerCopy[0].custId !== custId)
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy});
         await this.updateTableData(tableDataCopy, lastDeletedCustomerCopy[0], lastDeletedCustomerCopy[1])
+        this.setState({showUndoIndicator: false})
     }
 
     updateTableData = async (tableArray, elementoBeAdded, position) => {
@@ -160,8 +164,12 @@ class EnquiryForm extends React.Component {
                     </form>
                     {this.state.fetchedData === null ? <div>
                             <CircularProgress color="secondary"/></div> :
-                        <Button color="primary" variant="contained" onClick={() => this.getCustomerId()}>Save info
-                        </Button>}
+                        <div>
+                            <Button color="primary" variant="contained" onClick={() => this.getCustomerId()}>Save info
+                            </Button>
+                            {this.state.showUndoIndicator ? <div>
+                                <CircularProgress color="secondary"/></div> : ""}
+                        </div>}
                 </Paper>
                 <SimpleTable className="simpleTable" tableData={this.state.tableData}
                              custIdBeingDeleted={this.state.custIdBeingDeleted}
