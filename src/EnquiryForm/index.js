@@ -171,9 +171,10 @@ class EnquiryForm extends React.Component {
                                 <CircularProgress color="secondary"/></div> : ""}
                         </div>}
                 </Paper>
-                <SimpleTable className="simpleTable" tableData={this.state.tableData}
-                             custIdBeingDeleted={this.state.custIdBeingDeleted}
-                             deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/>
+                {this.state.tableData.length !== 0 ?
+                    <SimpleTable className="simpleTable" tableData={this.state.tableData}
+                                 custIdBeingDeleted={this.state.custIdBeingDeleted}
+                                 deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/> : ""}
                 <Snackbar open={this.state.openSnackBar} autoHideDuration={3000} onClose={this.closeSnackBar}>
                     <Alert onClose={this.closeSnackBar} severity="success" action={
                         <Button color="inherit" size="small" onClick={this.undoDelete}>
