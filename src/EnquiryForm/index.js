@@ -23,11 +23,17 @@ class EnquiryForm extends React.Component {
         showUndoIndicator: false
     };
 
+    errorBoolsList = [false, false];
+
     constructor(props) {
         super(props);
+
     }
 
-
+    setErrorsList = (errorsList) => {
+        console.log("errorList is:" + errorsList)
+        this.errorBoolsList = [].concat(errorsList);
+    }
     showSnackBar = () => {
         this.setState({openSnackBar: true});
     };
@@ -66,18 +72,29 @@ class EnquiryForm extends React.Component {
 
     }
     validateData = () => {
+        let tempBoolsList = [false, false];
         let alertWarning = [];
-        if (this.state.customerName.length === 0)
+        if (this.state.customerName.length === 0) {
             alertWarning.push("Customer Name can't be empty");
-        if (this.state.mobNo.length === 0)
+            tempBoolsList[0] = true;
+        }
+        if (this.state.mobNo.length === 0) {
             alertWarning.push("Contact number can't be empty");
-        if (isNaN(this.state.mobNo))
+            tempBoolsList[1] = true;
+        }
+        if (isNaN(this.state.mobNo)) {
             alertWarning.push("Please enter valid mob number");
-        if (`${parseInt(this.state.mobNo)}`.length !== 10)
+            tempBoolsList[1] = true;
+        }
+        if (`${parseInt(this.state.mobNo)}`.length !== 10) {
             alertWarning.push("Contact Number needs to be of 10 digit");
+            tempBoolsList[1] = true;
+        }
 
         if (alertWarning.length > 0)
             alert(alertWarning.join("\n"));
+        this.setErrorsList(tempBoolsList);
+        this.setState();
         return alertWarning.length === 0
     }
     handleInputChange = (event) => {
@@ -112,8 +129,10 @@ class EnquiryForm extends React.Component {
         localStorage.setItem('myData', JSON.stringify(tableArray));
     }
     getCustomerId = async () => {
-        if (!this.validateData())
+        if (!this.validateData()) {
+            this.setState({}, () => this.errorBoolsList);
             return 0;
+        }
         this.setState({fetchedData: null});
         let custDataMap = new Map();
         custDataMap["name"] = this.state.customerName;
@@ -131,7 +150,7 @@ class EnquiryForm extends React.Component {
             gender: "Male",
             mobNo: "",
             fetchedData: "",
-        })
+        }, () => this.errorBoolsList)
     }
 
     makePostRequest = async (url, dataAsMap) => {
@@ -162,14 +181,17 @@ class EnquiryForm extends React.Component {
                     <form>
                         <div>
                             <TextField name="customerName" id="customerName" label="Customer Name" variant="outlined"
-                                       onChange={this.handleInputChange} value={this.state.customerName}/>
+                                       onChange={this.handleInputChange} value={this.state.customerName}
+                                       error={this.errorBoolsList[0]}
+                            />
                             {/*<label htmlFor="customerName">Your Name:</label>*/}
                             {/*<input type="text" name="customerName" value={this.state.customerName}*/}
                             {/*       onChange={this.handleInputChange}/>*/}
                         </div>
                         <div>
                             <TextField name="mobNo" id="mobNo" label="Contact No." variant="outlined"
-                                       onChange={this.handleInputChange} value={this.state.mobNo}/>
+                                       onChange={this.handleInputChange} value={this.state.mobNo}
+                                       error={this.errorBoolsList[1]}/>
 
                         </div>
                         <div>
