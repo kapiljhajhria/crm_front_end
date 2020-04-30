@@ -138,7 +138,7 @@ class EnquiryForm extends React.Component {
         custDataMap["name"] = this.state.customerName;
         custDataMap["gender"] = this.state.gender;
         custDataMap["contact"] = this.state.mobNo;
-        let jsonMap = await this.makePostRequest('https://us-central1-form-manager-7234f.cloudfunctions.net/saveCustomer', custDataMap);
+        let jsonMap = await this.makePostRequest('http://localhost:5000/', custDataMap);
         this.setState({fetchedData: jsonMap['customerID']});
         console.log(this.state);
         console.log("fetched CustomerID is: " + jsonMap['customerID']);
@@ -154,7 +154,7 @@ class EnquiryForm extends React.Component {
     }
 
     makePostRequest = async (url, dataAsMap) => {
-        let response = await fetch("https://cors-anywhere.herokuapp.com/" + url, {
+        let response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(dataAsMap)
@@ -162,19 +162,21 @@ class EnquiryForm extends React.Component {
         let jsonMap = await response.json();
         return jsonMap;
     }
+    fetchFormData = async () => {
+        let resp = await fetch("http://localhost:5000/customers");
+        let dataList = await resp.json();
+        this.setState({tableData: dataList ?? []})
+        // return JSON.parse(resp.body);
+    }
 
     componentDidMount() {
-        let dataList = JSON.parse(localStorage.getItem('myData'));
-        this.setState({tableData: dataList ?? []})
-        console.log(localStorage.getItem('myData'))
-        // localStorage.getItem('myData').then((data)=>{
-        //     console.log(data);
-        //     console.log(" 2data from local storage");
-        // })
+        console.log("mounted")
+        this.fetchFormData();
         console.log("data from local storage");
     }
 
     render() {
+
         return (
             <div>
                 <Paper className="paper">
