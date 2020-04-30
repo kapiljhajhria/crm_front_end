@@ -52,7 +52,7 @@ export default function SimpleTable(props) {
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{row.gender}</TableCell>
                             <TableCell align="right">{row.contact}</TableCell>
-                            <TableCell align="right">{props.custIdBeingDeleted.includes(row.customerID) ? <div>
+                            <TableCell align="right">{props.deletingCustList.includes(row.customerID) ? <div>
                                 <CircularProgress color="secondary"/></div> : <Button
                                 variant="contained"
                                 color="secondary"

@@ -17,7 +17,7 @@ class EnquiryForm extends React.Component {
         mobNo: "",
         fetchedData: "",
         tableData: [],
-        custIdBeingDeleted: [],
+        deletingCustList: [],
         openSnackBar: false,
         lastDeletedCustomer: [],
         showUndoIndicator: false
@@ -50,26 +50,25 @@ class EnquiryForm extends React.Component {
     }
 
     deleteCustomerId = async (custId) => {
-        let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
-        custIdBeingDeletedCopy.push(custId);
-        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
-        console.log("deleting stuff id:" + custId);
-        let res = await this.makePostRequest("http://localhost:5000/deleteCustomer", {customerID: custId})
-        console.log("res from delete" + JSON.stringify(res))
-        let tableDataCopy = [].concat(this.state.tableData)
-        let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
-        console.log("found index:" + indexOfCust)
-        let lastDeletedCustomerCopy = tableDataCopy.splice(indexOfCust, 1);
-        lastDeletedCustomerCopy = [lastDeletedCustomerCopy[0], indexOfCust]
-        this.setState({lastDeletedCustomer: lastDeletedCustomerCopy})
-        localStorage.setItem('myData', JSON.stringify(tableDataCopy));
-        let dataList = JSON.parse(localStorage.getItem('myData'));
-        this.setState({tableData: dataList ?? []})
-        this.showSnackBar();
-        // let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
-        custIdBeingDeletedCopy = custIdBeingDeletedCopy.filter((custId) => lastDeletedCustomerCopy[0].custId !== custId)
-        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy});
+        //step 1 : add cust id to deleting list, so that indicator can be shown for deleting item
+        this.setState({deletingCustList: this.state.deletingCustList.concat(custId)})
+        console.log("deleting custID:" + custId);
 
+        //step2: remove that customer from local table and also make network request to remove it from server.
+        let indexOfCust = this.state.tableData.findIndex((cust) => cust.customerID === custId);
+        let res = await this.makePostRequest("http://localhost:5000/deleteCustomer", {
+            customerID: custId,
+            index: indexOfCust
+        })
+        let deletedCustomer = this.state.tableData[indexOfCust];
+        console.log("deleting custID from network, now updating local variables:" + custId);
+        this.setState({
+            lastDeletedCustomer: deletedCustomer,
+            tableData: this.state.tableData.filter((cust) => cust["customerID"] != custId),
+            deletingCustList: this.state.deletingCustList.filter((id) => id !== custId)
+        });
+        console.log("main list, deleting id list and last cust deleting list updated using setState, showing snackbar now" + custId);
+        this.showSnackBar();
     }
     validateData = () => {
         let tempBoolsList = [false, false];
@@ -107,15 +106,14 @@ class EnquiryForm extends React.Component {
         this.closeSnackBar();
         this.setState({showUndoIndicator: true})
         let deleteMap = new Map();
-        deleteMap["customerID"] = this.state.lastDeletedCustomer[0]["custId"];
-        let res = await this.makePostRequest("https://us-central1-form-manager-7234f.cloudfunctions.net/undoDeleteCustomer", deleteMap)
+        deleteMap["customerID"] = this.state.lastDeletedCustomer["customerID"];
+        let res = await this.makePostRequest("http://localhost:5000/undoDelete", deleteMap)
         console.log("res from undo" + JSON.stringify(res))
-        let lastDeletedCustomerCopy = this.state.lastDeletedCustomer;
         let tableDataCopy = [].concat(this.state.tableData);
-        let custIdBeingDeletedCopy = [].concat(this.state.custIdBeingDeleted);
-        custIdBeingDeletedCopy = custIdBeingDeletedCopy.filter((custId) => lastDeletedCustomerCopy[0].custId !== custId)
-        this.setState({custIdBeingDeleted: custIdBeingDeletedCopy});
-        await this.updateTableData(tableDataCopy, lastDeletedCustomerCopy[0], lastDeletedCustomerCopy[1])
+        let deletingCustListCopy = [].concat(this.state.deletingCustList);
+        deletingCustListCopy = deletingCustListCopy.filter((custId) => res["deletedCustomer"]["customerID"] !== custId)
+        this.setState({custIdBeingDeleted: deletingCustListCopy});
+        await this.updateTableData(tableDataCopy, res["deletedCustomer"], res["deletedCustomerIndex"])
         this.setState({showUndoIndicator: false})
     }
 
@@ -126,7 +124,6 @@ class EnquiryForm extends React.Component {
         else
             tableArray.splice(position, 0, elementoBeAdded);
         this.setState({tableData: tableArray, lastDeletedCustomer: []});
-        localStorage.setItem('myData', JSON.stringify(tableArray));
     }
     getCustomerId = async () => {
         if (!this.validateData()) {
@@ -186,9 +183,6 @@ class EnquiryForm extends React.Component {
                                        onChange={this.handleInputChange} value={this.state.customerName}
                                        error={this.errorBoolsList[0]}
                             />
-                            {/*<label htmlFor="customerName">Your Name:</label>*/}
-                            {/*<input type="text" name="customerName" value={this.state.customerName}*/}
-                            {/*       onChange={this.handleInputChange}/>*/}
                         </div>
                         <div>
                             <TextField name="mobNo" id="mobNo" label="Contact No." variant="outlined"
@@ -226,7 +220,7 @@ class EnquiryForm extends React.Component {
                 </Paper>
                 {this.state.tableData.length !== 0 ?
                     <SimpleTable className="simpleTable" tableData={this.state.tableData}
-                                 custIdBeingDeleted={this.state.custIdBeingDeleted}
+                                 deletingCustList={this.state.deletingCustList}
                                  deleteCustomerId={(custId) => this.deleteCustomerId(custId)}/> : ""}
                 <Snackbar open={this.state.openSnackBar} autoHideDuration={3000} onClose={this.closeSnackBar}>
                     <Alert onClose={this.closeSnackBar} severity="success" action={
@@ -237,22 +231,6 @@ class EnquiryForm extends React.Component {
                         Customer Deleted!
                     </Alert>
                 </Snackbar>
-                {/*<Alert onClose={this.closeSnackBar} severity="success" action={*/}
-                {/*    <Button color="inherit" size="small" onClick={this.undoDelete}>*/}
-                {/*        Undo*/}
-                {/*    </Button>*/}
-                {/*}>*/}
-                {/*    Customer Deleted!*/}
-                {/*</Alert>*/}
-                {/*<Alert severity="error">This is an error message!</Alert>*/}
-                {/*<Alert severity="warning">This is a warning message!</Alert>*/}
-                {/*<Alert severity="info">This is an information message!</Alert>*/}
-                {/*<Alert severity="success" action={*/}
-                {/*    <Button color="inherit" size="small">*/}
-                {/*        Undo*/}
-                {/*    </Button>*/}
-                {/*}>This is a success message!</Alert>*/}
-
             </div>
         );
     }
