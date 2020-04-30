@@ -60,10 +60,10 @@ class EnquiryForm extends React.Component {
             customerID: custId,
             index: indexOfCust
         })
-        let deletedCustomer = this.state.tableData[indexOfCust];
+        let deletedCustomerID = custId;
         console.log("deleting custID from network, now updating local variables:" + custId);
         this.setState({
-            lastDeletedCustomer: deletedCustomer,
+            lastDeletedCustomer: deletedCustomerID,
             tableData: this.state.tableData.filter((cust) => cust["customerID"] != custId),
             deletingCustList: this.state.deletingCustList.filter((id) => id !== custId)
         });
@@ -106,7 +106,7 @@ class EnquiryForm extends React.Component {
         this.closeSnackBar();
         this.setState({showUndoIndicator: true})
         let deleteMap = new Map();
-        deleteMap["customerID"] = this.state.lastDeletedCustomer["customerID"];
+        deleteMap["customerID"] = this.state.lastDeletedCustomer;
         let res = await this.makePostRequest("http://localhost:5000/undoDelete", deleteMap)
         console.log("res from undo" + JSON.stringify(res))
         let tableDataCopy = [].concat(this.state.tableData);
