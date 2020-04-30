@@ -54,7 +54,7 @@ class EnquiryForm extends React.Component {
         custIdBeingDeletedCopy.push(custId);
         this.setState({custIdBeingDeleted: custIdBeingDeletedCopy})
         console.log("deleting stuff id:" + custId);
-        let res = await this.makePostRequest("https://us-central1-form-manager-7234f.cloudfunctions.net/deleteCustomer", {customerID: custId})
+        let res = await this.makePostRequest("http://localhost:5000/deleteCustomer", {customerID: custId})
         console.log("res from delete" + JSON.stringify(res))
         let tableDataCopy = [].concat(this.state.tableData)
         let indexOfCust = tableDataCopy.findIndex((cust) => cust.custId === custId);
