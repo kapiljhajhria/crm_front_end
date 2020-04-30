@@ -47,19 +47,19 @@ export default function SimpleTable(props) {
                     {props.tableData.map((row) => (
                         <TableRow key={row.name}>
                             <TableCell component="th" scope="row">
-                                {row.custId}
+                                {row.customerID}
                             </TableCell>
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{row.gender}</TableCell>
                             <TableCell align="right">{row.contact}</TableCell>
-                            <TableCell align="right">{props.custIdBeingDeleted.includes(row.custId) ? <div>
+                            <TableCell align="right">{props.custIdBeingDeleted.includes(row.customerID) ? <div>
                                 <CircularProgress color="secondary"/></div> : <Button
                                 variant="contained"
                                 color="secondary"
                                 className={"deleteBtn"}
                                 startIcon={<DeleteIcon/>}
                                 onClick={() => {
-                                    props.deleteCustomerId(row.custId)
+                                    props.deleteCustomerId(row.customerID)
                                 }}
                             />}</TableCell>
                         </TableRow>

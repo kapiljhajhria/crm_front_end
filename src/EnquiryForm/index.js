@@ -45,8 +45,8 @@ class EnquiryForm extends React.Component {
 
         this.setState({openSnackBar: false});
     };
-    createData = (custId, name, gender, contact,) => {
-        return {custId, name, gender, contact,}
+    createData = (customerID, name, gender, contact,) => {
+        return {customerID, name, gender, contact,}
     }
 
     deleteCustomerId = async (custId) => {
