@@ -55,16 +55,15 @@ class EnquiryForm extends React.Component {
         console.log("deleting custID:" + custId);
 
         //step2: remove that customer from local table and also make network request to remove it from server.
-        let indexOfCust = this.state.tableData.findIndex((cust) => cust.customerID === custId);
+
         let res = await this.makePostRequest("http://localhost:5000/deleteCustomer", {
             customerID: custId,
-            index: indexOfCust
         })
         let deletedCustomerID = custId;
         console.log("deleting custID from network, now updating local variables:" + custId);
         this.setState({
             lastDeletedCustomer: deletedCustomerID,
-            tableData: this.state.tableData.filter((cust) => cust["customerID"] != custId),
+            tableData: this.state.tableData.filter((cust) => cust["_id"] != custId),
             deletingCustList: this.state.deletingCustList.filter((id) => id !== custId)
         });
         console.log("main list, deleting id list and last cust deleting list updated using setState, showing snackbar now" + custId);
