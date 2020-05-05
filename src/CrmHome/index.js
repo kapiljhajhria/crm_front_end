@@ -13,6 +13,7 @@ export default class CrmHome extends React.Component {
         pswd: "",
         rePswd: "",
         selectedTab: 0,
+        warning: ""
 
     };
     clearAllFields = () => {
@@ -20,17 +21,50 @@ export default class CrmHome extends React.Component {
             email: "",
             pswd: "",
             rePswd: "",
+            warning: ""
         })
     }
 
-    logInUser = () => {
+    validateEmail = () => {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)) {
+            return ""
+        } else return "Invalid email"
 
+    }
+
+    matchPasswords() {
+        if (this.state.pswd !== this.state.rePswd)
+            return "passwords don't match"
+    }
+
+    logInUser = () => {
+        let alertMsg = "";
+        if (this.state.email.length === 0) {
+            alertMsg = "Please enter an email id"
+        } else
+            alertMsg = this.validateEmail()
+
+        if (this.state.pswd.length === 0)
+            alertMsg = alertMsg + "\n Please enter your password"
+        if (alertMsg.length !== 0) alert(alertMsg)
     }
     signUpUser = () => {
         //validate if password matches or not
+        let alertMsg = "";
+        if (this.state.email.length === 0) {
+            alertMsg = "Please enter an email id"
+        } else
+            alertMsg = this.validateEmail()
 
+        if (this.state.pswd.length === 0) {
+            alertMsg = alertMsg + "\nPlease enter a password"
+        } else if (this.state.pswd !== this.state.rePswd) {
+            alertMsg = alertMsg + "\nPasswords don't match"
+        }
+        if (alertMsg.trim().length !== 0) alert(alertMsg)
         // and then take user to login tab
-        this.setState({selectedTab: 0})
+        if (alertMsg.length === 0)
+            this.setState({selectedTab: 0})
     }
 
     handleInputChange = (event) => {
