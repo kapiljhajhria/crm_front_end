@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import EnquiryForm from "./EnquiryForm";
+import CrmHome from "./CrmHome";
 
 function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <EnquiryForm/>
+                <CrmHome></CrmHome>
 
             </header>
         </div>
