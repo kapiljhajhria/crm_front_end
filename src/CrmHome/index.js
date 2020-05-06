@@ -74,8 +74,16 @@ export default class CrmHome extends React.Component {
         userSignUpDetails["pswd"] = this.state.pswd;
         let jsonMap = await this.makePostRequest('http://localhost:5000/signup', userSignUpDetails);
         // and then take user to login tab
-        if (jsonMap.successfull === false)
+        console.log("response of sign up post request")
+        console.log(jsonMap)
+        if (jsonMap.result === "failed")
             alertMsg = "failed to sign up, please try again"
+        if (jsonMap.result === "duplicateEmail")
+            alertMsg = "Email id already, exist, please use another email id  or reset password"
+        if (alertMsg.trim().length !== 0) {
+            alert(alertMsg)
+            return;
+        }
         if (alertMsg.length === 0)
             this.setState({selectedTab: 0})
     }
