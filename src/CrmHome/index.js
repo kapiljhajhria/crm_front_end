@@ -37,7 +37,8 @@ export default class CrmHome extends React.Component {
             return "passwords don't match"
     }
 
-    logInUser = async () => {
+    logInUser = async (e) => {
+        e.preventDefault();
         let alertMsg = "";
         if (this.state.email.length === 0) {
             alertMsg = "Please enter an email id"
@@ -63,10 +64,10 @@ export default class CrmHome extends React.Component {
             alertMsg = "You have logged in"
         }
 
-        if (alertMsg.length !== 0) {
-            alert(alertMsg)
-            return;
-        }
+        // if (alertMsg.length !== 0) {
+        //     alert(alertMsg)
+        //     return;
+        // }
 
     }
     signUpUser = async () => {
@@ -112,6 +113,7 @@ export default class CrmHome extends React.Component {
         let response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
+            credentials: "include",
             body: JSON.stringify(dataAsMap)
         })
         let jsonMap = await response.json();
@@ -152,7 +154,7 @@ export default class CrmHome extends React.Component {
                                    onChange={this.handleInputChange} value={this.state.pswd}/>
 
                         <Button color="primary" variant="contained"
-                                onClick={() => this.logInUser()}>log in
+                                onClick={(e) => this.logInUser(e)}>log in
                         </Button>
                     </div>
                     <div className="signupView tabView" hidden={this.state.selectedTab !== 1}>
