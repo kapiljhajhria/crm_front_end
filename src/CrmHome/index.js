@@ -37,7 +37,7 @@ export default class CrmHome extends React.Component {
             return "passwords don't match"
     }
 
-    logInUser = () => {
+    logInUser = async () => {
         let alertMsg = "";
         if (this.state.email.length === 0) {
             alertMsg = "Please enter an email id"
@@ -46,7 +46,28 @@ export default class CrmHome extends React.Component {
 
         if (this.state.pswd.length === 0)
             alertMsg = alertMsg + "\n Please enter your password"
-        if (alertMsg.length !== 0) alert(alertMsg)
+        if (alertMsg.length !== 0) {
+            alert(alertMsg)
+            return;
+        }
+
+        let jsonMap = await this.makePostRequest('http://localhost:5000/login', {
+            "email": this.state.email,
+            "pswd": this.state.pswd
+        });
+        if (jsonMap.result === "noEmail") {
+            alertMsg = "Email id doesn't exist, please sign up first"
+        } else if (jsonMap.result === "passwordError") {
+            alertMsg = "wrong password, please check your password"
+        } else if (jsonMap.result === "loggedIn") {
+            alertMsg = "You have logged in"
+        }
+
+        if (alertMsg.length !== 0) {
+            alert(alertMsg)
+            return;
+        }
+
     }
     signUpUser = async () => {
         //validate if password matches or not
