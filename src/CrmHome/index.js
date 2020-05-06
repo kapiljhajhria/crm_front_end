@@ -48,7 +48,7 @@ export default class CrmHome extends React.Component {
             alertMsg = alertMsg + "\n Please enter your password"
         if (alertMsg.length !== 0) alert(alertMsg)
     }
-    signUpUser = () => {
+    signUpUser = async () => {
         //validate if password matches or not
         let alertMsg = "";
         if (this.state.email.length === 0) {
@@ -61,10 +61,32 @@ export default class CrmHome extends React.Component {
         } else if (this.state.pswd !== this.state.rePswd) {
             alertMsg = alertMsg + "\nPasswords don't match"
         }
-        if (alertMsg.trim().length !== 0) alert(alertMsg)
+
+
+        if (alertMsg.trim().length !== 0) {
+            alert(alertMsg)
+            return;
+        }
+        //proceed with sending sign up details to server if all fields are filled correctly
+
+        let userSignUpDetails = new Map();
+        userSignUpDetails["email"] = this.state.email;
+        userSignUpDetails["pswd"] = this.state.pswd;
+        let jsonMap = await this.makePostRequest('http://localhost:5000/signup', userSignUpDetails);
         // and then take user to login tab
+        if (jsonMap.successfull === false)
+            alertMsg = "failed to sign up, please try again"
         if (alertMsg.length === 0)
             this.setState({selectedTab: 0})
+    }
+    makePostRequest = async (url, dataAsMap) => {
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dataAsMap)
+        })
+        let jsonMap = await response.json();
+        return jsonMap;
     }
 
     handleInputChange = (event) => {
