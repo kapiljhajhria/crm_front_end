@@ -152,7 +152,8 @@ class EnquiryForm extends React.Component {
     makePostRequest = async (url, dataAsMap) => {
         let response = await fetch(url, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json',},
+            credentials: "include",
             body: JSON.stringify(dataAsMap)
         })
         let jsonMap = await response.json();
