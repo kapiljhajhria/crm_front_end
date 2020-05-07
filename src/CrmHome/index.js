@@ -61,13 +61,14 @@ export default class CrmHome extends React.Component {
         } else if (jsonMap.result === "passwordError") {
             alertMsg = "wrong password, please check your password"
         } else if (jsonMap.result === "loggedIn") {
-            alertMsg = "You have logged in"
+            // alertMsg="loggedIN"
+            this.props.history.push('/customers')
         }
 
-        // if (alertMsg.length !== 0) {
-        //     alert(alertMsg)
-        //     return;
-        // }
+        if (alertMsg.length !== 0) {
+            alert(alertMsg)
+            return;
+        }
 
     }
     signUpUser = async () => {

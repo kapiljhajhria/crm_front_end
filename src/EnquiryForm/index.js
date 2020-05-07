@@ -159,7 +159,12 @@ class EnquiryForm extends React.Component {
         return jsonMap;
     }
     fetchFormData = async () => {
-        let resp = await fetch("http://localhost:5000/customers");
+        let resp = await fetch("http://localhost:5000/customers", {credentials: "include",});
+        if (resp.status === 403) {
+            alert("You need to login to view this page")
+            this.props.history.push('/')
+            console.log("gone to home page")
+        }
         let dataList = await resp.json();
         this.setState({tableData: dataList ?? []})
         // return JSON.parse(resp.body);
