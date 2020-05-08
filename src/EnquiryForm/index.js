@@ -9,6 +9,7 @@ import SimpleTable from "../Table";
 import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from '@material-ui/lab';
+import {makePostRequest} from "../CrmHome";
 
 class EnquiryForm extends React.Component {
     state = {
@@ -56,7 +57,7 @@ class EnquiryForm extends React.Component {
 
         //step2: remove that customer from local table and also make network request to remove it from server.
 
-        let res = await this.makePostRequest("http://localhost:5000/deleteCustomer", {
+        let res = await makePostRequest("http://localhost:5000/deleteCustomer", {
             customerID: custId,
         })
         let deletedCustomerID = custId;
@@ -106,7 +107,7 @@ class EnquiryForm extends React.Component {
         this.setState({showUndoIndicator: true})
         let deleteMap = new Map();
         deleteMap["customerID"] = this.state.lastDeletedCustomer;
-        let res = await this.makePostRequest("http://localhost:5000/undoDelete", deleteMap)
+        let res = await makePostRequest("http://localhost:5000/undoDelete", deleteMap)
         console.log("res from undo" + JSON.stringify(res))
         let tableDataCopy = [].concat(this.state.tableData);
         let deletingCustListCopy = [].concat(this.state.deletingCustList);
@@ -134,7 +135,7 @@ class EnquiryForm extends React.Component {
         custDataMap["name"] = this.state.customerName;
         custDataMap["gender"] = this.state.gender;
         custDataMap["contact"] = this.state.mobNo;
-        let jsonMap = await this.makePostRequest('http://localhost:5000/', custDataMap);
+        let jsonMap = await makePostRequest('http://localhost:5000/', custDataMap);
         this.setState({fetchedData: jsonMap['customerID']});
         console.log(this.state);
         console.log("fetched CustomerID is: " + jsonMap['customerID']);
@@ -149,16 +150,6 @@ class EnquiryForm extends React.Component {
         }, () => this.errorBoolsList)
     }
 
-    makePostRequest = async (url, dataAsMap) => {
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json',},
-            credentials: "include",
-            body: JSON.stringify(dataAsMap)
-        })
-        let jsonMap = await response.json();
-        return jsonMap;
-    }
     fetchFormData = async () => {
         let resp = await fetch("http://localhost:5000/customers", {credentials: "include",});
         if (resp.status === 403) {

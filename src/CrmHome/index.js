@@ -52,7 +52,7 @@ export default class CrmHome extends React.Component {
             return;
         }
 
-        let jsonMap = await this.makePostRequest('http://localhost:5000/login', {
+        let jsonMap = await makePostRequest('http://localhost:5000/login', {
             "email": this.state.email,
             "pswd": this.state.pswd
         });
@@ -95,7 +95,7 @@ export default class CrmHome extends React.Component {
         let userSignUpDetails = new Map();
         userSignUpDetails["email"] = this.state.email;
         userSignUpDetails["pswd"] = this.state.pswd;
-        let jsonMap = await this.makePostRequest('http://localhost:5000/signup', userSignUpDetails);
+        let jsonMap = await makePostRequest('http://localhost:5000/signup', userSignUpDetails);
         // and then take user to login tab
         console.log("response of sign up post request")
         console.log(jsonMap)
@@ -110,16 +110,7 @@ export default class CrmHome extends React.Component {
         if (alertMsg.length === 0)
             this.setState({selectedTab: 0})
     }
-    makePostRequest = async (url, dataAsMap) => {
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            credentials: "include",
-            body: JSON.stringify(dataAsMap)
-        })
-        let jsonMap = await response.json();
-        return jsonMap;
-    }
+
 
     handleInputChange = (event) => {
         this.setState({
@@ -181,3 +172,13 @@ export default class CrmHome extends React.Component {
     }
 }
 
+export async function makePostRequest(url, dataAsMap) {
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        credentials: "include",
+        body: JSON.stringify(dataAsMap)
+    })
+    let jsonMap = await response.json();
+    return jsonMap;
+}

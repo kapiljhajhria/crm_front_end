@@ -20,3 +20,17 @@
 .paperForm {
     /*height: 40vh;*/
 }
+
+.topAppBar {
+    /*display: flex;*/
+}
+
+.appBar-toolBar {
+    /*display: flex;*/
+    width: fit-content;
+    align-self: flex-end;
+}
+
+.menuButton {
+
+}
