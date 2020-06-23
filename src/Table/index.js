@@ -44,7 +44,7 @@ export default function SimpleTable(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {props.tableData.map((row) => (
+                    {props.tableData.map((row,idx) => (
                         <TableRow key={row.name}>
                             <TableCell component="th" scope="row">
                                 {row._id}
@@ -59,7 +59,7 @@ export default function SimpleTable(props) {
                                 className={"deleteBtn"}
                                 startIcon={<DeleteIcon/>}
                                 onClick={() => {
-                                    props.deleteCustomerId(row._id)
+                                    props.deleteCustomerId(row._id,idx)
                                 }}
                             />}</TableCell>
                         </TableRow>
