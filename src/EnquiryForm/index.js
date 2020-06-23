@@ -126,7 +126,7 @@ class EnquiryForm extends React.Component {
             tableArray.splice(position, 0, elementoBeAdded);
         this.setState({tableData: tableArray || [], lastDeletedCustomer: {}});
     }
-    getCustomerId = async () => {
+    getCustomerIdAndSaveData = async () => {
         if (!this.validateData()) {
             this.setState({}, () => this.errorBoolsList);
             return 0;
@@ -209,7 +209,7 @@ class EnquiryForm extends React.Component {
                     {this.state.fetchedData === null ? <div>
                             <CircularProgress color="secondary"/></div> :
                         <div>
-                            <Button color="primary" variant="contained" onClick={() => this.getCustomerId()}>Save info
+                            <Button color="primary" variant="contained" onClick={() => this.getCustomerIdAndSaveData()}>Save info
                             </Button>
                             {this.state.showUndoIndicator ? <div>
                                 <CircularProgress color="secondary"/></div> : ""}
