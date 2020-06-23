@@ -51,6 +51,9 @@ class EnquiryForm extends React.Component {
     }
 
     deleteCustomerId = async (custId, idx) => {
+        let customerDataWithIndex={}
+        customerDataWithIndex.data=this.state.tableData[idx]
+        customerDataWithIndex.index=idx;
         //step 1 : add cust id to deleting list, so that indicator can be shown for deleting item
         this.setState({deletingCustList: this.state.deletingCustList.concat(custId)})
         console.log("deleting custID:" + custId);
@@ -63,7 +66,7 @@ class EnquiryForm extends React.Component {
         let deletedCustomerID = custId;
         console.log("deleting custID from network, now updating local variables:" + custId);
         this.setState({
-            lastDeletedCustomer: {id: deletedCustomerID, index: idx},
+            lastDeletedCustomer: customerDataWithIndex,
             tableData: this.state.tableData.filter((cust) => cust["_id"] != custId),
             deletingCustList: this.state.deletingCustList.filter((id) => id !== custId)
         });
@@ -106,20 +109,20 @@ class EnquiryForm extends React.Component {
         this.closeSnackBar();
         this.setState({showUndoIndicator: true})
         let deleteMap = new Map();
-        deleteMap["customerID"] = this.state.lastDeletedCustomer.id;
+        deleteMap["customerID"] = this.state.lastDeletedCustomer.data._id;
         let res = await makePostRequest("http://localhost:5000/undoDelete", deleteMap)
         console.log("res from undo" + JSON.stringify(res))
         let tableDataCopy = [].concat(this.state.tableData);
         let deletingCustListCopy = [].concat(this.state.deletingCustList);
         deletingCustListCopy = deletingCustListCopy.filter((custId) => res["deletedCustomer"]["customerID"] !== custId)
         this.setState({custIdBeingDeleted: deletingCustListCopy});
-        console.log("trying to update table data after undo, custID and index is", res["deletedCustomer", this.state.lastDeletedCustomer.index])
-        await this.updateTableData(tableDataCopy, res["deletedCustomerId"], this.state.lastDeletedCustomer.index)
+        console.log("trying to update table data after undo, custID and index is", res["deletedCustomerId"], this.state.lastDeletedCustomer.index)
+        await this.updateTableData(tableDataCopy, this.state.lastDeletedCustomer.data, this.state.lastDeletedCustomer.index)
         this.setState({showUndoIndicator: false})
     }
 
     updateTableData = async (tableArray, elementoBeAdded, position) => {
-        console.log("position in new function is:" + position)
+        console.log("position in new function is: and element to be added is " + position,elementoBeAdded)
         elementoBeAdded._id=elementoBeAdded.customerID
         if (position === undefined)
             tableArray.push(elementoBeAdded)
