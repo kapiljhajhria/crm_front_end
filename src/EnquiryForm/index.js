@@ -47,7 +47,7 @@ class EnquiryForm extends React.Component {
         this.setState({openSnackBar: false});
     };
     createData = (customerID, name, gender, contact,) => {
-        return {customerID, name, gender, contact,}
+        return {_id:customerID, name, gender, contact,}
     }
 
     deleteCustomerId = async (custId, idx) => {
@@ -117,13 +117,14 @@ class EnquiryForm extends React.Component {
         deletingCustListCopy = deletingCustListCopy.filter((custId) => res["deletedCustomer"]["customerID"] !== custId)
         this.setState({custIdBeingDeleted: deletingCustListCopy});
         console.log("trying to update table data after undo, custID and index is", res["deletedCustomerId"], this.state.lastDeletedCustomer.index)
+        console.log("going to undo delete for cust with data and at index",this.state.lastDeletedCustomer.data,this.state.lastDeletedCustomer.index)
         await this.updateTableData(tableDataCopy, this.state.lastDeletedCustomer.data, this.state.lastDeletedCustomer.index)
         this.setState({showUndoIndicator: false})
     }
 
     updateTableData = async (tableArray, elementoBeAdded, position) => {
         console.log("position in new function is: and element to be added is " + position,elementoBeAdded)
-        elementoBeAdded._id=elementoBeAdded.customerID
+        // elementoBeAdded._id=elementoBeAdded.customerID
         if (position === undefined)
             tableArray.push(elementoBeAdded)
         else
@@ -141,10 +142,10 @@ class EnquiryForm extends React.Component {
         custDataMap["gender"] = this.state.gender;
         custDataMap["contact"] = this.state.mobNo;
         let jsonMap = await makePostRequest('http://localhost:5000/', custDataMap);
-        this.setState({fetchedData: jsonMap['customerID']});
+        this.setState({fetchedData: jsonMap['_id']});
         console.log("response from server after adding another customer is ,",jsonMap)
         console.log(this.state);
-        console.log("fetched CustomerID is: " + jsonMap['customerID']);
+        console.log("fetched CustomerID is: " + jsonMap['_id']);
 
         let tableDataCopy = [].concat(this.state.tableData);
         await this.updateTableData(tableDataCopy, this.createData(jsonMap['_id'], this.state.customerName, this.state.gender, this.state.mobNo))
