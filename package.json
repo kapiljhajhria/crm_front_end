@@ -2,7 +2,7 @@
   "name": "forms",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://kapiljhajhria.github.io/reactForms",
+  "homepage": "https://kapiljhajhria.github.io/crm_front_end",
   "dependencies": {
     "@material-ui/core": "^4.9.11",
     "@material-ui/icons": "^4.9.1",
