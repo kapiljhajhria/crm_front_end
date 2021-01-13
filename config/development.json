@@ -1,0 +1,5 @@
+{
+  "crm_jwtPrivateKey": "crm_jwtPrivateKeyDev",
+  "db": "mongodb://127.0.0.1:27017/crm",
+  "api_url":"http://localhost:3001/api"
+}
