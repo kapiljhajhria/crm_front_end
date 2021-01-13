@@ -7,6 +7,7 @@ import { Button } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import config from "../config.json";
+import { ToastContainer, toast } from "react-toastify";
 
 export default class CrmHome extends React.Component {
   state = {
@@ -85,7 +86,14 @@ export default class CrmHome extends React.Component {
     //proceed with sending sign up details to server if all fields are filled correctly
 
     //make request to sign up user
-    await userService.register(this.state);
+    try {
+      await userService.register(this.state);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        toast.error(ex.response.data);
+      }
+      return;
+    }
     if (alertMsg.length === 0) this.setState({ selectedTab: 0 });
   };
 
@@ -103,102 +111,105 @@ export default class CrmHome extends React.Component {
 
   render() {
     return (
-      <div className={"crmHome-main"}>
-        <div className="crmHome-title">Best CRM App</div>
-        <Paper className={"paperForm"}>
-          <Tabs
-            value={this.state.selectedTab}
-            onChange={(ev, tabNo) => this.changeTab(tabNo)}
-            aria-label="simple tabs example"
-          >
-            <Tab label="LOGIN" />
-            <Tab label="SIGN UP" />
-          </Tabs>
-
-          <div
-            className="loginView tabView"
-            hidden={this.state.selectedTab !== 0}
-          >
-            <TextField
-              name="email"
-              id="logIn-email"
-              label="email"
-              variant="outlined"
-              onChange={this.handleInputChange}
-              value={this.state.email}
-            />
-
-            <TextField
-              name="password"
-              id="logIn-password"
-              label="password"
-              variant="outlined"
-              type={"password"}
-              onChange={this.handleInputChange}
-              value={this.state.password}
-            />
-
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={(e) => this.logInUser(e)}
+      <React.Fragment>
+        <ToastContainer />
+        <div className={"crmHome-main"}>
+          <div className="crmHome-title">Best CRM App</div>
+          <Paper className={"paperForm"}>
+            <Tabs
+              value={this.state.selectedTab}
+              onChange={(ev, tabNo) => this.changeTab(tabNo)}
+              aria-label="simple tabs example"
             >
-              log in
-            </Button>
-          </div>
-          <div
-            className="signupView tabView"
-            hidden={this.state.selectedTab !== 1}
-          >
-            <TextField
-              name="name"
-              id="signup-name"
-              label="name"
-              variant="outlined"
-              onChange={this.handleInputChange}
-              value={this.state.name}
-              // error={this.errorBoolsList[0]}
-            />
-            <TextField
-              name="email"
-              id="signUp-email"
-              label="email"
-              variant="outlined"
-              onChange={this.handleInputChange}
-              value={this.state.email}
-              // error={this.errorBoolsList[0]}
-            />
+              <Tab label="LOGIN" />
+              <Tab label="SIGN UP" />
+            </Tabs>
 
-            <TextField
-              name="password"
-              id="signUp-password"
-              label="password"
-              variant="outlined"
-              type={"password"}
-              onChange={this.handleInputChange}
-              value={this.state.password}
-            />
-
-            <TextField
-              name="rePassword"
-              id="signUp-rePassword"
-              label="password"
-              variant="outlined"
-              type={"password"}
-              onChange={this.handleInputChange}
-              value={this.state.rePassword}
-            />
-
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => this.signUpUser()}
+            <div
+              className="loginView tabView"
+              hidden={this.state.selectedTab !== 0}
             >
-              Sign Up
-            </Button>
-          </div>
-        </Paper>
-      </div>
+              <TextField
+                name="email"
+                id="logIn-email"
+                label="email"
+                variant="outlined"
+                onChange={this.handleInputChange}
+                value={this.state.email}
+              />
+
+              <TextField
+                name="password"
+                id="logIn-password"
+                label="password"
+                variant="outlined"
+                type={"password"}
+                onChange={this.handleInputChange}
+                value={this.state.password}
+              />
+
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={(e) => this.logInUser(e)}
+              >
+                log in
+              </Button>
+            </div>
+            <div
+              className="signupView tabView"
+              hidden={this.state.selectedTab !== 1}
+            >
+              <TextField
+                name="name"
+                id="signup-name"
+                label="name"
+                variant="outlined"
+                onChange={this.handleInputChange}
+                value={this.state.name}
+                // error={this.errorBoolsList[0]}
+              />
+              <TextField
+                name="email"
+                id="signUp-email"
+                label="email"
+                variant="outlined"
+                onChange={this.handleInputChange}
+                value={this.state.email}
+                // error={this.errorBoolsList[0]}
+              />
+
+              <TextField
+                name="password"
+                id="signUp-password"
+                label="password"
+                variant="outlined"
+                type={"password"}
+                onChange={this.handleInputChange}
+                value={this.state.password}
+              />
+
+              <TextField
+                name="rePassword"
+                id="signUp-rePassword"
+                label="password"
+                variant="outlined"
+                type={"password"}
+                onChange={this.handleInputChange}
+                value={this.state.rePassword}
+              />
+
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => this.signUpUser()}
+              >
+                Sign Up
+              </Button>
+            </div>
+          </Paper>
+        </div>
+      </React.Fragment>
     );
   }
 }
