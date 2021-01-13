@@ -61,7 +61,8 @@ export default class CrmHome extends React.Component {
 
     //make request to login user
     try {
-      await login(this.state);
+      const { data: jwt } = await login(this.state);
+      localStorage.setItem("token", jwt);
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
