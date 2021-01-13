@@ -1,5 +1,5 @@
-import * as userService from "../services/userService";
-import { login } from "../services/authService";
+import * as userService from "../../services/userService";
+import { login } from "../../services/authService";
 import React from "react";
 import "./styles.css";
 import Paper from "@material-ui/core/Paper";
@@ -7,7 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import config from "../config.json";
+import config from "../../config.json";
 import { ToastContainer, toast } from "react-toastify";
 
 export default class CrmHome extends React.Component {

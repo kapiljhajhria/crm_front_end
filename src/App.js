@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import CrmHome, { makePostRequest } from "./CrmHome";
+import CrmHome, { makePostRequest } from "./components/CrmHome";
 import { Route, Switch, useHistory } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import EnquiryForm from "./EnquiryForm";
+import EnquiryForm from "./components/EnquiryForm";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Button } from "@material-ui/core";
 import "react-toastify/dist/ReactToastify.css";
 import jwtDecode from "jwt-decode";
-import { setUser } from "@sentry/react";
 import LogOut from "./components/logout";
 function App(props) {
   const history = useHistory();
