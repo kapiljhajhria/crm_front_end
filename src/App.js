@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import CrmHome, { makePostRequest } from "./components/CrmHome";
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import EnquiryForm from "./components/EnquiryForm";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -41,7 +41,14 @@ function App(props) {
       </AppBar>
       <header className="App-header">
         <Switch>
-          <Route exact path={"/customers"} component={EnquiryForm} />
+          <Route
+            exact
+            path={"/customers"}
+            render={(props) => {
+              if (!user) return <Redirect to="/" />;
+              return <EnquiryForm {...props} />;
+            }}
+          />
 
           <Route path={"/"} component={CrmHome} />
           <Route path={"/logout"} component={LogOut} />
