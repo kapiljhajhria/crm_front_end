@@ -1,4 +1,0 @@
-{
-  "crm_jwtPrivateKey": "crm_jwtPrivateKeyProd",
-  "db": "mongodb://localhost/crm"
-}
