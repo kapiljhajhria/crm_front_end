@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import CrmHome, { makePostRequest } from "./components/CrmHome";
 import ProtectedRoute from "./components/common/protectedRoute";
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 import EnquiryForm from "./components/EnquiryForm";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";

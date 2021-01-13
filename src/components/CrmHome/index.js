@@ -1,6 +1,7 @@
 import authService from "../../services/authService";
 import * as userService from "../../services/userService";
 import React from "react";
+import { Redirect } from "react-router-dom";
 import "./styles.css";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
@@ -121,6 +122,7 @@ export default class CrmHome extends React.Component {
   };
 
   render() {
+    if (authService.getCurrentUser()) return <Redirect to="/customers" />;
     return (
       <React.Fragment>
         <ToastContainer />
