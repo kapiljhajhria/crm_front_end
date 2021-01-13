@@ -1,5 +1,5 @@
+import authService from "../../services/authService";
 import * as userService from "../../services/userService";
-import { login } from "../../services/authService";
 import React from "react";
 import "./styles.css";
 import Paper from "@material-ui/core/Paper";
@@ -61,8 +61,7 @@ export default class CrmHome extends React.Component {
 
     //make request to login user
     try {
-      const { data: jwt } = await login(this.state);
-      localStorage.setItem("token", jwt);
+      await authService.login(this.state);
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
@@ -98,7 +97,7 @@ export default class CrmHome extends React.Component {
     //make request to sign up user
     try {
       const response = await userService.register(this.state);
-      localStorage.setItem("token", response.headers["x-auth-token"]);
+      authService.loginWithJwt(response.headers["x-auth-token"]);
       this.props.history.push("/customers");
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
