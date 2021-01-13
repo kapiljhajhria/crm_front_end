@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import CrmHome, { makePostRequest } from "./components/CrmHome";
+import ProtectedRoute from "./components/common/protectedRoute";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import EnquiryForm from "./components/EnquiryForm";
 import AppBar from "@material-ui/core/AppBar";
@@ -9,6 +10,7 @@ import { Button } from "@material-ui/core";
 import "react-toastify/dist/ReactToastify.css";
 import LogOut from "./components/logout";
 import authService from "./services/authService";
+
 function App(props) {
   const history = useHistory();
   const [user, setUser] = useState({});
@@ -41,14 +43,7 @@ function App(props) {
       </AppBar>
       <header className="App-header">
         <Switch>
-          <Route
-            exact
-            path={"/customers"}
-            render={(props) => {
-              if (!user) return <Redirect to="/" />;
-              return <EnquiryForm {...props} />;
-            }}
-          />
+          <ProtectedRoute exact path={"/customers"} component={EnquiryForm} />
 
           <Route path={"/"} component={CrmHome} />
           <Route path={"/logout"} component={LogOut} />
