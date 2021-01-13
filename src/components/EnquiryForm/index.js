@@ -112,39 +112,6 @@ class EnquiryForm extends React.Component {
     });
   };
   genderList = ["Male", "Female", "Rather Not Say", "Others"];
-  undoDelete = async () => {
-    this.closeSnackBar();
-    this.setState({ showUndoIndicator: true });
-    let deleteMap = new Map();
-    deleteMap["customerID"] = this.state.lastDeletedCustomer.data._id;
-    let res = await makePostRequest(
-      "http://localhost:5000/undoDelete",
-      deleteMap
-    );
-    console.log("res from undo" + JSON.stringify(res));
-    let tableDataCopy = [].concat(this.state.tableData);
-    let deletingCustListCopy = [].concat(this.state.deletingCustList);
-    deletingCustListCopy = deletingCustListCopy.filter(
-      (custId) => res["deletedCustomer"]["customerID"] !== custId
-    );
-    this.setState({ custIdBeingDeleted: deletingCustListCopy });
-    console.log(
-      "trying to update table data after undo, custID and index is",
-      res["deletedCustomerId"],
-      this.state.lastDeletedCustomer.index
-    );
-    console.log(
-      "going to undo delete for cust with data and at index",
-      this.state.lastDeletedCustomer.data,
-      this.state.lastDeletedCustomer.index
-    );
-    await this.updateTableData(
-      tableDataCopy,
-      this.state.lastDeletedCustomer.data,
-      this.state.lastDeletedCustomer.index
-    );
-    this.setState({ showUndoIndicator: false });
-  };
 
   updateTableData = async (tableArray, elementoBeAdded, position) => {
     console.log(
@@ -298,15 +265,7 @@ class EnquiryForm extends React.Component {
           autoHideDuration={3000}
           onClose={this.closeSnackBar}
         >
-          <Alert
-            onClose={this.closeSnackBar}
-            severity="success"
-            action={
-              <Button color="inherit" size="small" onClick={this.undoDelete}>
-                Undo
-              </Button>
-            }
-          >
+          <Alert onClose={this.closeSnackBar} severity="success">
             Customer Deleted!
           </Alert>
         </Snackbar>
