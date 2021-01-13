@@ -1,4 +1,5 @@
 import * as userService from "../services/userService";
+import { login } from "../services/authService";
 import React from "react";
 import "./styles.css";
 import Paper from "@material-ui/core/Paper";
@@ -59,11 +60,19 @@ export default class CrmHome extends React.Component {
     }
 
     //make request to login user
-
+    try {
+      await login(this.state);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        toast.error(ex.response.data);
+      }
+      return;
+    }
     if (alertMsg.length !== 0) {
       alert(alertMsg);
       return;
     }
+    this.props.history.push("/customers");
   };
 
   signUpUser = async () => {
