@@ -97,7 +97,9 @@ export default class CrmHome extends React.Component {
 
     //make request to sign up user
     try {
-      await userService.register(this.state);
+      const response = await userService.register(this.state);
+      localStorage.setItem("token", response.headers["x-auth-token"]);
+      this.props.history.push("/customers");
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
