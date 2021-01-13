@@ -8,7 +8,15 @@ const ProtectedRoute = ({ path, component: Component, render, ...rest }) => {
       exact
       {...rest}
       render={(props) => {
-        if (!authService.getCurrentUser()) return <Redirect to="/" />;
+        if (!authService.getCurrentUser())
+          return (
+            <Redirect
+              to={{
+                pathname: "/",
+                state: { from: props.location },
+              }}
+            />
+          );
         return Component ? <Component {...props} /> : render(props);
       }}
     />
