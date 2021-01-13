@@ -15,6 +15,6 @@ export function saveCustomer(customer) {
   return http.post(apiEndpoint, customer);
 }
 
-export function deleteCustomer(movieId) {
-  return http.delete(customerUrl(movieId));
+export function deleteCustomer(customerId) {
+  return http.delete(customerUrl(customerId));
 }

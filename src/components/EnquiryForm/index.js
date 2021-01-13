@@ -10,12 +10,13 @@ import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Alert } from "@material-ui/lab";
 import { makePostRequest } from "../CrmHome";
-
+import * as customerService from "../../services/customerService";
+const _ = require("lodash");
 class EnquiryForm extends React.Component {
   state = {
-    customerName: "",
-    gender: "Male",
-    mobNo: "",
+    name: "",
+    gender: "male",
+    contact: "",
     fetchedData: "",
     tableData: [],
     deletingCustList: [],
@@ -61,15 +62,9 @@ class EnquiryForm extends React.Component {
 
     //step2: remove that customer from local table and also make network request to remove it from server.
 
-    let res = await makePostRequest("http://localhost:5000/deleteCustomer", {
-      customerID: custId,
-    });
-    let deletedCustomerID = custId;
-    console.log(
-      "deleting custID from network, now updating local variables:" + custId
-    );
+    const resp = await customerService.deleteCustomer(custId);
+    console.log("customer deleted, resp.data is ", resp.data);
     this.setState({
-      lastDeletedCustomer: customerDataWithIndex,
       tableData: this.state.tableData.filter((cust) => cust["_id"] != custId),
       deletingCustList: this.state.deletingCustList.filter(
         (id) => id !== custId
@@ -84,19 +79,19 @@ class EnquiryForm extends React.Component {
   validateData = () => {
     let tempBoolsList = [false, false];
     let alertWarning = [];
-    if (this.state.customerName.length === 0) {
+    if (this.state.name.length === 0) {
       alertWarning.push("Customer Name can't be empty");
       tempBoolsList[0] = true;
     }
-    if (this.state.mobNo.length === 0) {
+    if (this.state.contact.length === 0) {
       alertWarning.push("Contact number can't be empty");
       tempBoolsList[1] = true;
     }
-    if (isNaN(this.state.mobNo)) {
+    if (isNaN(this.state.contact)) {
       alertWarning.push("Please enter valid mob number");
       tempBoolsList[1] = true;
     }
-    if (`${parseInt(this.state.mobNo)}`.length !== 10) {
+    if (`${parseInt(this.state.contact)}`.length !== 10) {
       alertWarning.push("Contact Number needs to be of 10 digit");
       tempBoolsList[1] = true;
     }
@@ -111,7 +106,7 @@ class EnquiryForm extends React.Component {
       [event.target.name]: event.target.value,
     });
   };
-  genderList = ["Male", "Female", "Rather Not Say", "Others"];
+  genderList = ["male", "female", "others", "prefer not to say"];
 
   updateTableData = async (tableArray, elementoBeAdded, position) => {
     console.log(
@@ -124,32 +119,31 @@ class EnquiryForm extends React.Component {
     this.setState({ tableData: tableArray || [], lastDeletedCustomer: {} });
   };
   getCustomerIdAndSaveData = async () => {
+    //validate data and show alert window
     if (!this.validateData()) {
       this.setState({}, () => this.errorBoolsList);
       return 0;
     }
     this.setState({ fetchedData: null });
     let custDataMap = new Map();
-    custDataMap["name"] = this.state.customerName;
-    custDataMap["gender"] = this.state.gender;
-    custDataMap["contact"] = this.state.mobNo;
-    let jsonMap = await makePostRequest("http://localhost:5000/", custDataMap);
-    this.setState({ fetchedData: jsonMap["_id"] });
+    const response = await customerService.saveCustomer(
+      _.pick(this.state, ["name", "contact", "gender"])
+    );
     console.log(
       "response from server after adding another customer is ,",
-      jsonMap
+      response
     );
     console.log(this.state);
-    console.log("fetched CustomerID is: " + jsonMap["_id"]);
+    // console.log("fetched CustomerID is: " + jsonMap["_id"]);
 
     let tableDataCopy = [].concat(this.state.tableData);
     await this.updateTableData(
       tableDataCopy,
       this.createData(
-        jsonMap["_id"],
-        this.state.customerName,
+        response.data["_id"],
+        this.state.name,
         this.state.gender,
-        this.state.mobNo
+        this.state.contact
       )
     );
     this.setState(
@@ -164,17 +158,9 @@ class EnquiryForm extends React.Component {
   };
 
   fetchFormData = async () => {
-    let resp = await fetch("http://localhost:5000/customers", {
-      credentials: "include",
-    });
-    if (resp.status === 403) {
-      alert("You need to login to view this page");
-      this.props.history.push("/");
-      console.log("gone to home page");
-    }
-    let dataList = await resp.json();
+    const response = await customerService.getCustomers();
+    let dataList = response.data;
     this.setState({ tableData: dataList ?? [] });
-    // return JSON.parse(resp.body);
   };
 
   componentDidMount() {
@@ -190,23 +176,23 @@ class EnquiryForm extends React.Component {
           <form>
             <div>
               <TextField
-                name="customerName"
+                name="name"
                 id="customerName"
                 label="Customer Name"
                 variant="outlined"
                 onChange={this.handleInputChange}
-                value={this.state.customerName}
+                value={this.state.name}
                 error={this.errorBoolsList[0]}
               />
             </div>
             <div>
               <TextField
-                name="mobNo"
+                name="contact"
                 id="mobNo"
                 label="Contact No."
                 variant="outlined"
                 onChange={this.handleInputChange}
-                value={this.state.mobNo}
+                value={this.state.contact}
                 error={this.errorBoolsList[1]}
               />
             </div>
