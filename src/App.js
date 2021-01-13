@@ -10,7 +10,7 @@ import { Button } from "@material-ui/core";
 import "react-toastify/dist/ReactToastify.css";
 import jwtDecode from "jwt-decode";
 import { setUser } from "@sentry/react";
-
+import LogOut from "./components/logout";
 function App(props) {
   const history = useHistory();
   const [user, setUser] = useState({});
@@ -28,13 +28,15 @@ function App(props) {
   }
 
   useEffect(() => {
-    const jwt = localStorage.getItem("token");
-    const user = jwtDecode(jwt);
-    console.log("user is", user);
-    setUser(user);
-    const test = props;
-    console.log("test:");
-    console.log(test);
+    try {
+      const jwt = localStorage.getItem("token");
+      const user = jwtDecode(jwt);
+      console.log("user is", user);
+      setUser(user);
+      history.push("/customers");
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
@@ -51,6 +53,7 @@ function App(props) {
           <Route exact path={"/customers"} component={EnquiryForm} />
 
           <Route path={"/"} component={CrmHome} />
+          <Route path={"/logout"} component={LogOut} />
           {/*<Route path={"/reactForms"} component={CrmHome}/>*/}
         </Switch>
       </header>
