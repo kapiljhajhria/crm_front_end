@@ -63,6 +63,7 @@ export default class CrmHome extends React.Component {
     //make request to login user
     try {
       await authService.login(this.state);
+      this.props.updateUser();
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
@@ -99,6 +100,7 @@ export default class CrmHome extends React.Component {
     try {
       const response = await userService.register(this.state);
       authService.loginWithJwt(response.headers["x-auth-token"]);
+      this.props.updateUser();
       this.props.history.push("/customers");
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {

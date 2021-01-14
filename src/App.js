@@ -12,19 +12,30 @@ import MyAppBar from "./components/appBar";
 function App(props) {
   const [user, setUser] = useState({});
 
-  useEffect(() => {
+  const updateUser = () => {
     const user = authService.getCurrentUser();
     setUser(user);
+  };
+
+  useEffect(() => {
+    updateUser();
   }, []);
 
   return (
     <div className="App">
-      <MyAppBar user={user} />
+      {/* <userContext> */}
+      <MyAppBar user={user} updateUser={updateUser} />
+      {/* </userContext> */}
+
       <header className="App-header">
         <Switch>
           <ProtectedRoute exact path={"/customers"} component={EnquiryForm} />
 
-          <Route path={"/"} component={CrmHome} />
+          <Route
+            exact
+            path="/"
+            render={(props) => <CrmHome {...props} updateUser={updateUser} />}
+          />
           <Route path={"/logout"} component={LogOut} />
           {/*<Route path={"/reactForms"} component={CrmHome}/>*/}
         </Switch>

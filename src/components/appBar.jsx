@@ -10,6 +10,7 @@ const MyAppBar = (props) => {
 
   async function logOutUser() {
     authService.logout();
+    props.updateUser();
     history.push("/");
   }
   return (
