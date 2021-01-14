@@ -17,9 +17,6 @@ function App(props) {
   async function logOutUser() {
     authService.logout();
     history.push("/");
-    } else {
-      alert("Error logging out, try again");
-    }
   }
 
   useEffect(() => {
