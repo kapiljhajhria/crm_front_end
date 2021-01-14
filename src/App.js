@@ -36,6 +36,10 @@ function App(props) {
             path="/"
             render={(props) => <CrmHome {...props} updateUser={updateUser} />}
           />
+          <Route
+            path="/"
+            render={(props) => <CrmHome {...props} updateUser={updateUser} />}
+          />
           <Route path={"/logout"} component={LogOut} />
           {/*<Route path={"/reactForms"} component={CrmHome}/>*/}
         </Switch>
