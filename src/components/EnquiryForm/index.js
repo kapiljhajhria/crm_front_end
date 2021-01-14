@@ -64,7 +64,7 @@ class EnquiryForm extends React.Component {
     const resp = await customerService.deleteCustomer(custId);
     console.log("customer deleted, resp.data is ", resp.data);
     this.setState({
-      tableData: this.state.tableData.filter((cust) => cust["_id"] != custId),
+      tableData: this.state.tableData.filter((cust) => cust["_id"] !== custId),
       deletingCustList: this.state.deletingCustList.filter(
         (id) => id !== custId
       ),
