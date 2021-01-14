@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import CrmHome, { makePostRequest } from "./components/CrmHome";
+import CrmHome from "./components/CrmHome/index";
 import ProtectedRoute from "./components/common/protectedRoute";
 import { Route, Switch, useHistory } from "react-router-dom";
-import EnquiryForm from "./components/EnquiryForm";
+import EnquiryForm from "./components/EnquiryForm/index";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Button } from "@material-ui/core";
@@ -15,13 +15,8 @@ function App(props) {
   const history = useHistory();
   const [user, setUser] = useState({});
   async function logOutUser() {
-    console.log("logging out user");
-    let result = await makePostRequest("http://localhost:5000/logout", {
-      reqType: "log me out",
-    });
-
-    if (result.status === "loggedOut") {
-      history.push("/");
+    authService.logout();
+    history.push("/");
     } else {
       alert("Error logging out, try again");
     }
@@ -36,9 +31,13 @@ function App(props) {
     <div className="App">
       <AppBar position="static" className={"topAppBar"}>
         <Toolbar className={"appBar-toolBar"}>
-          <Button color="inherit" onClick={logOutUser}>
-            Login
-          </Button>
+          {user ? (
+            <Button color="inherit" onClick={logOutUser}>
+              Logout
+            </Button>
+          ) : (
+            ""
+          )}
         </Toolbar>
       </AppBar>
       <header className="App-header">

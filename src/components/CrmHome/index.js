@@ -226,23 +226,3 @@ export default class CrmHome extends React.Component {
     );
   }
 }
-
-export async function makePostRequest(url, dataAsMap) {
-  let response;
-  let jsonMap;
-  try {
-    response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      // credentials: "include",
-      body: JSON.stringify(dataAsMap),
-    });
-    console.log("got response from api, response", response);
-    console.log("got response from api, response.body", response.body);
-    jsonMap = await response.json();
-    console.log("got response from api, jsonMap", jsonMap);
-  } catch (err) {
-    console.log(err);
-  }
-  return jsonMap;
-}

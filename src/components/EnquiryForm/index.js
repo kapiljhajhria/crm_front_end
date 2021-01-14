@@ -9,7 +9,6 @@ import SimpleTable from "../Table";
 import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Alert } from "@material-ui/lab";
-import { makePostRequest } from "../CrmHome";
 import * as customerService from "../../services/customerService";
 const _ = require("lodash");
 class EnquiryForm extends React.Component {
