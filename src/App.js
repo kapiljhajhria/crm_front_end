@@ -32,11 +32,6 @@ function App(props) {
           <ProtectedRoute exact path={"/customers"} component={EnquiryForm} />
 
           <Route
-            exact
-            path="/"
-            render={(props) => <CrmHome {...props} updateUser={updateUser} />}
-          />
-          <Route
             path="/"
             render={(props) => <CrmHome {...props} updateUser={updateUser} />}
           />
