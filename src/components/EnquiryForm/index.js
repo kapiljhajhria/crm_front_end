@@ -13,6 +13,7 @@ import * as customerService from "../../services/customerService";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
+import { ColorLensOutlined } from "@material-ui/icons";
 const _ = require("lodash");
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -28,12 +29,13 @@ const EnquiryForm = (props) => {
     gender: "male",
     contact: "",
     fetchedData: "",
-    tableData: [],
-    deletingCustList: [],
+
     openSnackBar: false,
     lastDeletedCustomer: {},
     showUndoIndicator: false,
   });
+  const [customers, setCustomers] = useState([]);
+  const [deletingCustList, setDeletingCustList] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [errorBoolsList, setErrorBoolsList] = useState([false, false]);
 
@@ -54,24 +56,34 @@ const EnquiryForm = (props) => {
   };
 
   const deleteCustomerId = async (custId, idx) => {
-    let customerDataWithIndex = {};
-    customerDataWithIndex.data = state.tableData[idx];
-    customerDataWithIndex.index = idx;
     //step 1 : add cust id to deleting list, so that indicator can be shown for deleting item
-    setState({
-      ...state,
-      deletingCustList: state.deletingCustList.concat(custId),
-    });
+    setDeletingCustList([...deletingCustList, custId]);
 
     //step2: remove that customer from local table and also make network request to remove it from server.
 
-    const resp = await customerService.deleteCustomer(custId);
-    setState({
-      ...state,
-      tableData: state.tableData.filter((cust) => cust["_id"] !== custId),
-      deletingCustList: state.deletingCustList.filter((id) => id !== custId),
-    });
-
+    let response;
+    try {
+      response = await customerService.deleteCustomer(custId);
+    } catch (ex) {
+      setDeletingCustList([...deletingCustList.filter((id) => id !== custId)]);
+      console.log("error while delting and error resp is ", ex.response);
+      if (
+        (ex.response && ex.response.status === 400) ||
+        ex.response.status === 404
+      ) {
+        toast.error(ex.response.data);
+      }
+      return;
+    }
+    const updatedCustomers = [
+      ...customers.filter((cust) => cust["_id"] !== custId),
+    ];
+    setCustomers(updatedCustomers);
+    console.log(
+      "new table data list after delting customer is ",
+      updatedCustomers
+    );
+    setDeletingCustList(deletingCustList.filter((id) => id !== custId));
     showSnackBar();
   };
 
@@ -105,22 +117,6 @@ const EnquiryForm = (props) => {
   };
   const genderList = ["male", "female", "others", "prefer not to say"];
 
-  const updateTableData = async (tableArray, elementoBeAdded, position) => {
-    console.log(
-      "update table data called with ",
-      tableArray,
-      elementoBeAdded,
-      position
-    );
-    if (position === undefined) tableArray.push(elementoBeAdded);
-    else tableArray.splice(position, 0, elementoBeAdded);
-    setState({
-      ...state,
-      tableData: tableArray || [],
-      lastDeletedCustomer: {},
-    });
-  };
-
   const getCustomerIdAndSaveData = async () => {
     //validate data and show alert window
     if (!validateData()) {
@@ -145,16 +141,14 @@ const EnquiryForm = (props) => {
     }
     // console.log("fetched CustomerID is: " + jsonMap["_id"]);
 
-    let tableDataCopy = [].concat(state.tableData);
-
     setState({
       ...state,
-      tableData: [...state.tableData, createNewCustFromRespData(response.data)],
       customerName: "",
       gender: "male",
       mobNo: "",
       fetchedData: "",
     });
+    setCustomers([...customers, createNewCustFromRespData(response.data)]);
   };
 
   const fetchFormData = async () => {
@@ -171,7 +165,7 @@ const EnquiryForm = (props) => {
       return;
     }
     let dataList = response.data;
-    setState({ ...state, tableData: dataList });
+    setCustomers(dataList);
   };
 
   useEffect(() => {
@@ -215,7 +209,9 @@ const EnquiryForm = (props) => {
                 color="secondary"
               >
                 {genderList.map((el) => (
-                  <MenuItem value={el}>{el}</MenuItem>
+                  <MenuItem key={el + "optionsKey"} value={el}>
+                    {el}
+                  </MenuItem>
                 ))}
               </Select>
             </div>
@@ -228,11 +224,11 @@ const EnquiryForm = (props) => {
             Save info
           </Button>
         </Paper>
-        {state.tableData.length !== 0 ? (
+        {customers.length !== 0 ? (
           <SimpleTable
             className="simpleTable"
-            tableData={state.tableData}
-            deletingCustList={state.deletingCustList}
+            tableData={customers}
+            deletingCustList={deletingCustList}
             deleteCustomerId={(custId, idx) => deleteCustomerId(custId, idx)}
           />
         ) : (
