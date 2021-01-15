@@ -110,11 +110,14 @@ const CrmHome = (props) => {
 
     //make request to sign up user
     try {
+      setOpen(true);
       const response = await userService.register(state);
       authService.loginWithJwt(response.headers["x-auth-token"]);
       props.updateUser();
+      setOpen(false);
       props.history.push("/customers");
     } catch (ex) {
+      setOpen(false);
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
       }
