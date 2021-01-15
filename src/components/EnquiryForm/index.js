@@ -10,8 +10,19 @@ import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Alert } from "@material-ui/lab";
 import * as customerService from "../../services/customerService";
+import { ToastContainer, toast } from "react-toastify";
+import Backdrop from "@material-ui/core/Backdrop";
+import { makeStyles } from "@material-ui/core/styles";
 const _ = require("lodash");
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
+}));
+
 const EnquiryForm = (props) => {
+  const classes = useStyles();
   const [state, setState] = useState({
     name: "",
     gender: "male",
@@ -23,7 +34,7 @@ const EnquiryForm = (props) => {
     lastDeletedCustomer: {},
     showUndoIndicator: false,
   });
-
+  const [open, setOpen] = React.useState(false);
   const [errorBoolsList, setErrorBoolsList] = useState([false, false]);
 
   const showSnackBar = () => {
@@ -118,10 +129,20 @@ const EnquiryForm = (props) => {
       return 0;
     }
     setState({ ...state, fetchedData: null });
-    let custDataMap = new Map();
-    const response = await customerService.saveCustomer(
-      _.pick(state, ["name", "contact", "gender"])
-    );
+    let response;
+    try {
+      setOpen(true);
+      response = await customerService.saveCustomer(
+        _.pick(state, ["name", "contact", "gender"])
+      );
+      setOpen(false);
+    } catch (ex) {
+      setOpen(false);
+      if (ex.response && ex.response.status === 400) {
+        toast.error(ex.response.data);
+      }
+      return;
+    }
     // console.log("fetched CustomerID is: " + jsonMap["_id"]);
 
     let tableDataCopy = [].concat(state.tableData);
@@ -137,9 +158,20 @@ const EnquiryForm = (props) => {
   };
 
   const fetchFormData = async () => {
-    const response = await customerService.getCustomers();
+    let response;
+    try {
+      setOpen(true);
+      response = await customerService.getCustomers();
+      setOpen(false);
+    } catch (ex) {
+      setOpen(false);
+      if (ex.response && ex.response.status === 400) {
+        toast.error(ex.response.data + "/n please refresh page");
+      }
+      return;
+    }
     let dataList = response.data;
-    setState({ ...state, tableData: dataList ?? [] });
+    setState({ ...state, tableData: dataList });
   };
 
   useEffect(() => {
@@ -147,89 +179,94 @@ const EnquiryForm = (props) => {
   }, []);
 
   return (
-    <div>
-      <Paper className="paper">
-        <form>
-          <div>
-            <TextField
-              name="name"
-              id="customerName"
-              label="Customer Name"
-              variant="outlined"
-              onChange={handleInputChange}
-              value={state.name}
-              error={errorBoolsList[0]}
-            />
-          </div>
-          <div>
-            <TextField
-              name="contact"
-              id="mobNo"
-              label="Contact No."
-              variant="outlined"
-              onChange={handleInputChange}
-              value={state.contact}
-              error={errorBoolsList[1]}
-            />
-          </div>
-          <div>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              name={"gender"}
-              value={state.gender}
-              onChange={handleInputChange}
-              color="secondary"
-            >
-              {genderList.map((el) => (
-                <MenuItem value={el}>{el}</MenuItem>
-              ))}
-            </Select>
-          </div>
-        </form>
-        {state.fetchedData === null ? (
-          <div>
-            <CircularProgress color="secondary" />
-          </div>
+    <React.Fragment>
+      <div>
+        <Paper className="paper">
+          <form>
+            <div>
+              <TextField
+                name="name"
+                id="customerName"
+                label="Customer Name"
+                variant="outlined"
+                onChange={handleInputChange}
+                value={state.name}
+                error={errorBoolsList[0]}
+              />
+            </div>
+            <div>
+              <TextField
+                name="contact"
+                id="mobNo"
+                label="Contact No."
+                variant="outlined"
+                onChange={handleInputChange}
+                value={state.contact}
+                error={errorBoolsList[1]}
+              />
+            </div>
+            <div>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                name={"gender"}
+                value={state.gender}
+                onChange={handleInputChange}
+                color="secondary"
+              >
+                {genderList.map((el) => (
+                  <MenuItem value={el}>{el}</MenuItem>
+                ))}
+              </Select>
+            </div>
+          </form>
+          {state.fetchedData === null ? (
+            <div>
+              <CircularProgress color="secondary" />
+            </div>
+          ) : (
+            <div>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => getCustomerIdAndSaveData()}
+              >
+                Save info
+              </Button>
+              {state.showUndoIndicator ? (
+                <div>
+                  <CircularProgress color="secondary" />
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
+          )}
+        </Paper>
+        {state.tableData.length !== 0 ? (
+          <SimpleTable
+            className="simpleTable"
+            tableData={state.tableData}
+            deletingCustList={state.deletingCustList}
+            deleteCustomerId={(custId, idx) => deleteCustomerId(custId, idx)}
+          />
         ) : (
-          <div>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => getCustomerIdAndSaveData()}
-            >
-              Save info
-            </Button>
-            {state.showUndoIndicator ? (
-              <div>
-                <CircularProgress color="secondary" />
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
+          ""
         )}
-      </Paper>
-      {state.tableData.length !== 0 ? (
-        <SimpleTable
-          className="simpleTable"
-          tableData={state.tableData}
-          deletingCustList={state.deletingCustList}
-          deleteCustomerId={(custId, idx) => deleteCustomerId(custId, idx)}
-        />
-      ) : (
-        ""
-      )}
-      <Snackbar
-        open={state.openSnackBar}
-        autoHideDuration={3000}
-        onClose={closeSnackBar}
-      >
-        <Alert onClose={closeSnackBar} severity="success">
-          Customer Deleted!
-        </Alert>
-      </Snackbar>
-    </div>
+        <Snackbar
+          open={state.openSnackBar}
+          autoHideDuration={3000}
+          onClose={closeSnackBar}
+        >
+          <Alert onClose={closeSnackBar} severity="success">
+            Customer Deleted!
+          </Alert>
+        </Snackbar>
+      </div>
+      <Backdrop className={classes.backdrop} open={open}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </React.Fragment>
   );
 };
 
