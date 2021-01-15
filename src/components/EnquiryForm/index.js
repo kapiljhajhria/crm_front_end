@@ -34,7 +34,6 @@ const EnquiryForm = (props) => {
     showUndoIndicator: false,
   });
   const [customers, setCustomers] = useState([]);
-  const [deletingCustList, setDeletingCustList] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [errorBoolsList, setErrorBoolsList] = useState([false, false]);
 
@@ -53,19 +52,33 @@ const EnquiryForm = (props) => {
   const createNewCustFromRespData = ({ _id, name, gender, contact }) => {
     return { _id, name, gender, contact };
   };
-
+  const addDeletingPropertyToCustomer = (customerId) => {
+    const tempCustomers = [...customers];
+    const index = tempCustomers.findIndex(
+      (customer) => customer._id === customerId
+    );
+    tempCustomers[index].deleting = true;
+    setCustomers(tempCustomers);
+  };
+  const removeDeletingPropertyFromCustomer = (customerId) => {
+    const tempCustomers = [...customers];
+    const index = tempCustomers.findIndex(
+      (customer) => customer._id === customerId
+    );
+    delete tempCustomers[index].deleting;
+    setCustomers(tempCustomers);
+  };
   const deleteCustomerId = async (custId, idx) => {
-    //step 1 : add cust id to deleting list, so that indicator can be shown for deleting item
-    setDeletingCustList([...deletingCustList, custId]);
-
+    //step 1 :add deleing property to the customer thats being deleted
+    addDeletingPropertyToCustomer(custId);
     //step2: remove that customer from local table and also make network request to remove it from server.
 
     let response;
     try {
       response = await customerService.deleteCustomer(custId);
     } catch (ex) {
-      setDeletingCustList([...deletingCustList.filter((id) => id !== custId)]);
-      console.log("error while delting and error resp is ", ex.response);
+      //failed to delete the customer. remove the property deleting from customer object
+      removeDeletingPropertyFromCustomer(custId);
       if (
         (ex.response && ex.response.status === 400) ||
         ex.response.status === 404
@@ -82,7 +95,7 @@ const EnquiryForm = (props) => {
       "new table data list after delting customer is ",
       updatedCustomers
     );
-    setDeletingCustList(deletingCustList.filter((id) => id !== custId));
+
     showSnackBar();
   };
 
@@ -228,7 +241,6 @@ const EnquiryForm = (props) => {
           <SimpleTable
             className="simpleTable"
             tableData={customers}
-            deletingCustList={deletingCustList}
             deleteCustomerId={(custId, idx) => deleteCustomerId(custId, idx)}
           />
         ) : (
