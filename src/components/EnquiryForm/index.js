@@ -46,7 +46,7 @@ const EnquiryForm = (props) => {
       return;
     }
 
-    setState({ ...state.contact, openSnackBar: false });
+    setState({ ...state, openSnackBar: false });
   };
 
   const createNewCustFromRespData = ({ _id, name, gender, contact }) => {
