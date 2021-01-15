@@ -1,6 +1,6 @@
 import authService from "../../services/authService";
 import * as userService from "../../services/userService";
-import React from "react";
+import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import "./styles.css";
 import Paper from "@material-ui/core/Paper";
@@ -10,50 +10,59 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import config from "../../config.json";
 import { ToastContainer, toast } from "react-toastify";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { makeStyles } from "@material-ui/core/styles";
 
-export default class CrmHome extends React.Component {
-  state = {
+const useStyles = makeStyles((theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
+  },
+}));
+const CrmHome = (props) => {
+  const classes = useStyles();
+  const [state, setState] = useState({
     email: "",
     name: "",
     password: "",
     rePassword: "",
     selectedTab: 0,
     warning: "",
-  };
+  });
+  const [open, setOpen] = React.useState(false);
+  const _apiUrl = config.api_url;
 
-  _apiUrl = config.api_url;
-
-  clearAllFields = () => {
-    this.setState({
+  const clearAllFields = (rest) => {
+    setState({
+      ...state,
       email: "",
       name: "",
       password: "",
       rePassword: "",
       warning: "",
+      ...rest,
     });
   };
 
-  validateEmail = () => {
-    if (
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)
-    ) {
+  const validateEmail = () => {
+    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(state.email)) {
       return "";
     } else return "Invalid email";
   };
 
-  matchPasswords() {
-    if (this.state.password !== this.state.rePassword)
-      return "passwords don't match";
-  }
+  const matchPasswords = () => {
+    if (state.password !== state.rePassword) return "passwords don't match";
+  };
 
-  logInUser = async (e) => {
+  const logInUser = async (e) => {
     e.preventDefault();
     let alertMsg = "";
-    if (this.state.email.length === 0) {
+    if (state.email.length === 0) {
       alertMsg = "Please enter an email id";
-    } else alertMsg = this.validateEmail();
+    } else alertMsg = validateEmail();
 
-    if (this.state.password.length === 0)
+    if (state.password.length === 0)
       alertMsg = alertMsg + "\n Please enter your password";
     if (alertMsg.length !== 0) {
       alert(alertMsg);
@@ -62,9 +71,11 @@ export default class CrmHome extends React.Component {
 
     //make request to login user
     try {
-      await authService.login(this.state);
-      this.props.updateUser();
+      setOpen(true);
+      await authService.login(state);
+      props.updateUser();
     } catch (ex) {
+      setOpen(false);
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
       }
@@ -74,19 +85,20 @@ export default class CrmHome extends React.Component {
       alert(alertMsg);
       return;
     }
-    this.props.history.push("/customers");
+    setOpen(false);
+    props.history.push("/customers");
   };
 
-  signUpUser = async () => {
+  const signUpUser = async () => {
     //validate if password matches or not
     let alertMsg = "";
-    if (this.state.email.length === 0) {
+    if (state.email.length === 0) {
       alertMsg = "Please enter an email id";
-    } else alertMsg = this.validateEmail();
+    } else alertMsg = validateEmail();
 
-    if (this.state.password.length === 0) {
+    if (state.password.length === 0) {
       alertMsg = alertMsg + "\nPlease enter a password";
-    } else if (this.state.password !== this.state.rePassword) {
+    } else if (state.password !== state.rePassword) {
       alertMsg = alertMsg + "\nPasswords don't match";
     }
 
@@ -98,133 +110,132 @@ export default class CrmHome extends React.Component {
 
     //make request to sign up user
     try {
-      const response = await userService.register(this.state);
+      const response = await userService.register(state);
       authService.loginWithJwt(response.headers["x-auth-token"]);
-      this.props.updateUser();
-      this.props.history.push("/customers");
+      props.updateUser();
+      props.history.push("/customers");
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         toast.error(ex.response.data);
       }
       return;
     }
-    if (alertMsg.length === 0) this.setState({ selectedTab: 0 });
+    if (alertMsg.length === 0) setState({ ...state, selectedTab: 0 });
   };
 
-  handleInputChange = (event) => {
-    this.setState({
+  const handleInputChange = (event) => {
+    setState({
+      ...state,
       [event.target.name]: event.target.value,
     });
   };
-  changeTab = (tabNo) => {
-    this.setState({
+  const changeTab = (tabNo) => {
+    setState({
+      ...state,
       selectedTab: tabNo,
     });
-    this.clearAllFields();
+    clearAllFields({ selectedTab: tabNo });
   };
 
-  render() {
-    if (authService.getCurrentUser()) return <Redirect to="/customers" />;
-    return (
-      <React.Fragment>
-        <ToastContainer />
-        <div className={"crmHome-main"}>
-          <div className="crmHome-title">Best CRM App</div>
-          <Paper className={"paperForm"}>
-            <Tabs
-              value={this.state.selectedTab}
-              onChange={(ev, tabNo) => this.changeTab(tabNo)}
-              aria-label="simple tabs example"
+  if (authService.getCurrentUser()) return <Redirect to="/customers" />;
+  return (
+    <React.Fragment>
+      <ToastContainer />
+      <div className={"crmHome-main"}>
+        <div className="crmHome-title">Best CRM App</div>
+        <Paper className={"paperForm"}>
+          <Tabs
+            value={state.selectedTab}
+            onChange={(ev, tabNo) => changeTab(tabNo)}
+            aria-label="simple tabs example"
+          >
+            <Tab label="LOGIN" />
+            <Tab label="SIGN UP" />
+          </Tabs>
+
+          <div className="loginView tabView" hidden={state.selectedTab === 1}>
+            <TextField
+              name="email"
+              id="logIn-email"
+              label="email"
+              variant="outlined"
+              onChange={handleInputChange}
+              value={state.email}
+            />
+
+            <TextField
+              name="password"
+              id="logIn-password"
+              label="password"
+              variant="outlined"
+              type={"password"}
+              onChange={handleInputChange}
+              value={state.password}
+            />
+
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={(e) => logInUser(e)}
             >
-              <Tab label="LOGIN" />
-              <Tab label="SIGN UP" />
-            </Tabs>
+              log in
+            </Button>
+          </div>
+          <div className="signupView tabView" hidden={state.selectedTab === 0}>
+            <TextField
+              name="name"
+              id="signup-name"
+              label="name"
+              variant="outlined"
+              onChange={handleInputChange}
+              value={state.name}
+              // error={errorBoolsList[0]}
+            />
+            <TextField
+              name="email"
+              id="signUp-email"
+              label="email"
+              variant="outlined"
+              onChange={handleInputChange}
+              value={state.email}
+              // error={errorBoolsList[0]}
+            />
 
-            <div
-              className="loginView tabView"
-              hidden={this.state.selectedTab !== 0}
+            <TextField
+              name="password"
+              id="signUp-password"
+              label="password"
+              variant="outlined"
+              type={"password"}
+              onChange={handleInputChange}
+              value={state.password}
+            />
+
+            <TextField
+              name="rePassword"
+              id="signUp-rePassword"
+              label="password"
+              variant="outlined"
+              type={"password"}
+              onChange={handleInputChange}
+              value={state.rePassword}
+            />
+
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => signUpUser()}
             >
-              <TextField
-                name="email"
-                id="logIn-email"
-                label="email"
-                variant="outlined"
-                onChange={this.handleInputChange}
-                value={this.state.email}
-              />
+              Sign Up
+            </Button>
+          </div>
+        </Paper>
+      </div>
+      <Backdrop className={classes.backdrop} open={open}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    </React.Fragment>
+  );
+};
 
-              <TextField
-                name="password"
-                id="logIn-password"
-                label="password"
-                variant="outlined"
-                type={"password"}
-                onChange={this.handleInputChange}
-                value={this.state.password}
-              />
-
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={(e) => this.logInUser(e)}
-              >
-                log in
-              </Button>
-            </div>
-            <div
-              className="signupView tabView"
-              hidden={this.state.selectedTab !== 1}
-            >
-              <TextField
-                name="name"
-                id="signup-name"
-                label="name"
-                variant="outlined"
-                onChange={this.handleInputChange}
-                value={this.state.name}
-                // error={this.errorBoolsList[0]}
-              />
-              <TextField
-                name="email"
-                id="signUp-email"
-                label="email"
-                variant="outlined"
-                onChange={this.handleInputChange}
-                value={this.state.email}
-                // error={this.errorBoolsList[0]}
-              />
-
-              <TextField
-                name="password"
-                id="signUp-password"
-                label="password"
-                variant="outlined"
-                type={"password"}
-                onChange={this.handleInputChange}
-                value={this.state.password}
-              />
-
-              <TextField
-                name="rePassword"
-                id="signUp-rePassword"
-                label="password"
-                variant="outlined"
-                type={"password"}
-                onChange={this.handleInputChange}
-                value={this.state.rePassword}
-              />
-
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => this.signUpUser()}
-              >
-                Sign Up
-              </Button>
-            </div>
-          </Paper>
-        </div>
-      </React.Fragment>
-    );
-  }
-}
+export default CrmHome;
