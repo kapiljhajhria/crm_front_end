@@ -5,23 +5,27 @@
   "background_color": "#2196f3",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/crm_front_end/",
-  "start_url": "/crm_front_end/",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
     {
       "src": "images/icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "images/icon-512x512.png",
+      "src": "images/icon-192x192.png",
       "type": "image/png",
       "sizes": "512x512"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "CRM by kapil",
+      "short_name": "crm",
+      "description": "Best CRM web app",
+      "url": "/",
+      "icons": [{ "src": "/images/icon-512x512.png", "sizes": "192x192" }]
     }
   ]
 }
