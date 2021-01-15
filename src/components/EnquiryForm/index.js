@@ -220,12 +220,6 @@ const EnquiryForm = (props) => {
               </Select>
             </div>
           </form>
-          {state.fetchedData === null ? (
-            <div>
-              <CircularProgress color="secondary" />
-            </div>
-          ) : (
-            <div>
           <Button
             color="primary"
             variant="contained"
@@ -233,15 +227,6 @@ const EnquiryForm = (props) => {
           >
             Save info
           </Button>
-              {state.showUndoIndicator ? (
-                <div>
-                  <CircularProgress color="secondary" />
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-          )}
         </Paper>
         {state.tableData.length !== 0 ? (
           <SimpleTable
