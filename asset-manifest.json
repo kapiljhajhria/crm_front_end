@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/crm_front_end/static/css/main.dc1a42c6.chunk.css",
-    "main.js": "/crm_front_end/static/js/main.758d476e.chunk.js",
-    "main.js.map": "/crm_front_end/static/js/main.758d476e.chunk.js.map",
+    "main.js": "/crm_front_end/static/js/main.ad1328b8.chunk.js",
+    "main.js.map": "/crm_front_end/static/js/main.ad1328b8.chunk.js.map",
     "runtime-main.js": "/crm_front_end/static/js/runtime-main.668569b1.js",
     "runtime-main.js.map": "/crm_front_end/static/js/runtime-main.668569b1.js.map",
     "static/css/2.1781c263.chunk.css": "/crm_front_end/static/css/2.1781c263.chunk.css",
     "static/js/2.a8e24d95.chunk.js": "/crm_front_end/static/js/2.a8e24d95.chunk.js",
     "static/js/2.a8e24d95.chunk.js.map": "/crm_front_end/static/js/2.a8e24d95.chunk.js.map",
     "index.html": "/crm_front_end/index.html",
-    "precache-manifest.d4393df17be190408b4b49ec708326c8.js": "/crm_front_end/precache-manifest.d4393df17be190408b4b49ec708326c8.js",
+    "precache-manifest.15e9ef2430201b1c85f4dbd34052be76.js": "/crm_front_end/precache-manifest.15e9ef2430201b1c85f4dbd34052be76.js",
     "service-worker.js": "/crm_front_end/service-worker.js",
     "static/css/2.1781c263.chunk.css.map": "/crm_front_end/static/css/2.1781c263.chunk.css.map",
     "static/css/main.dc1a42c6.chunk.css.map": "/crm_front_end/static/css/main.dc1a42c6.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.1781c263.chunk.css",
     "static/js/2.a8e24d95.chunk.js",
     "static/css/main.dc1a42c6.chunk.css",
-    "static/js/main.758d476e.chunk.js"
+    "static/js/main.ad1328b8.chunk.js"
   ]
 }
