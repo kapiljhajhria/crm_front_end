@@ -13,7 +13,6 @@ import * as customerService from "../../services/customerService";
 import { ToastContainer, toast } from "react-toastify";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
-import { ColorLensOutlined } from "@material-ui/icons";
 const _ = require("lodash");
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -160,7 +159,7 @@ const EnquiryForm = (props) => {
     } catch (ex) {
       setOpen(false);
       if (ex.response && ex.response.status === 400) {
-        toast.error(ex.response.data + "/n please refresh page");
+        toast.error(ex.response.data + ", please refresh page");
       }
       return;
     }
@@ -174,6 +173,7 @@ const EnquiryForm = (props) => {
 
   return (
     <React.Fragment>
+      <ToastContainer />
       <div>
         <Paper className="paper">
           <form>
