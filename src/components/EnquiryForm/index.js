@@ -226,13 +226,13 @@ const EnquiryForm = (props) => {
             </div>
           ) : (
             <div>
-              <Button
-                color="primary"
-                variant="contained"
-                onClick={() => getCustomerIdAndSaveData()}
-              >
-                Save info
-              </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => getCustomerIdAndSaveData()}
+          >
+            Save info
+          </Button>
               {state.showUndoIndicator ? (
                 <div>
                   <CircularProgress color="secondary" />
