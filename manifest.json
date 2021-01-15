@@ -18,5 +18,14 @@
       "type": "image/png",
       "sizes": "512x512"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "CRM by kapil",
+      "short_name": "crm",
+      "description": "Best CRM web app",
+      "url": "/crm_front_end/",
+      "icons": [{ "src": "/images/icon-512x512.png", "sizes": "192x192" }]
+    }
   ]
 }
