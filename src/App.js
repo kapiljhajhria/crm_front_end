@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import CrmHome from "./components/CrmHome/index";
+import CrmHome from "./pages/CrmHome/index";
 import ProtectedRoute from "./components/common/protectedRoute";
 import { Route, Switch, useHistory } from "react-router-dom";
-import EnquiryForm from "./components/EnquiryForm/index";
+import EnquiryForm from "./pages/EnquiryForm/index";
 import "react-toastify/dist/ReactToastify.css";
 import LogOut from "./components/logout";
 import authService from "./services/authService";
