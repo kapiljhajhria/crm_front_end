@@ -1,5 +1,5 @@
 {
   "db": "mongodb://127.0.0.1:27017/crm",
-  "api_url": "http://localhost:3001/api",
-  "apiUrl": "http://localhost:3001/api"
+  "api_url": "http://localhost:3000/api",
+  "apiUrl": "http://localhost:3000/api"
 }
